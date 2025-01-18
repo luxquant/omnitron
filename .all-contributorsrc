@@ -1,0 +1,69 @@
+{
+  "projectName": "omnitron",
+  "projectOwner": "Eugeny",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "Eugeny",
+      "name": "Eugeny",
+      "avatar_url": "https://avatars.githubusercontent.com/u/161476?v=4",
+      "profile": "https://github.com/Eugeny",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "heywoodlh",
+      "name": "Spencer Heywood",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18178614?v=4",
+      "profile": "https://the-empire.systems/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "apiening",
+      "name": "Andreas Piening",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2064875?v=4",
+      "profile": "https://github.com/apiening",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Gurkengewuerz",
+      "name": "Niklas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10966337?v=4",
+      "profile": "https://github.com/Gurkengewuerz",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "notnooblord",
+      "name": "Nooblord",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11678665?v=4",
+      "profile": "https://github.com/notnooblord",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "SheaSmith",
+      "name": "Shea Smith",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51303984?v=4",
+      "profile": "https://shea.nz/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

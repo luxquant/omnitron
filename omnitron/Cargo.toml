@@ -1,0 +1,54 @@
+[package]
+name = "omnitron"
+version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+ansi_term = "0.12"
+anyhow = { version = "1.0", features = ["backtrace"] }
+async-trait = "0.1.85"
+atty = "0.2"
+bytes.workspace = true
+clap = { version = "4.0", features = ["derive"] }
+config = { version = "0.13", features = ["yaml"], default-features = false }
+console = { version = "0.15", default-features = false }
+console-subscriber = { version = "0.1", optional = true }
+data-encoding.workspace = true
+dialoguer = "0.10"
+futures.workspace = true
+notify = "5.1"
+rcgen = { version = "0.10", features = ["zeroize"] }
+serde_json.workspace = true
+serde_yaml = "0.9"
+sea-orm = { version = "0.12.2", default-features = false }
+time = "0.3"
+tokio = { version = "1.20", features = ["tracing", "signal", "macros"] }
+tracing.workspace = true
+tracing-subscriber = { version = "0.3", features = [
+    "env-filter",
+    "local-time",
+] }
+uuid = "1.3"
+omnitron-admin = { version = "*", path = "../omnitron-admin" }
+omnitron-common = { version = "*", path = "../omnitron-common" }
+omnitron-core = { version = "*", path = "../omnitron-core" }
+omnitron-db-entities = { version = "*", path = "../omnitron-db-entities" }
+omnitron-protocol-http = { version = "*", path = "../omnitron-protocol-http" }
+omnitron-protocol-mysql = { version = "*", path = "../omnitron-protocol-mysql" }
+omnitron-protocol-postgres = { version = "*", path = "../omnitron-protocol-postgres" }
+omnitron-protocol-ssh = { version = "*", path = "../omnitron-protocol-ssh" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+sd-notify = "0.4"
+
+[features]
+default = ["sqlite"]
+tokio-console = ["dep:console-subscriber", "tokio/tracing"]
+postgres = ["omnitron-core/postgres"]
+mysql = ["omnitron-core/mysql"]
+sqlite = ["omnitron-core/sqlite"]
