@@ -1,324 +1,298 @@
 use std::sync::Arc;
 
+use omnitron_common::{OmnitronError, Role as RoleConfig, User as UserConfig, UserRequireCredentialsPolicy};
+use omnitron_db_entities::{Role, User, UserRoleAssignment};
 use poem::web::Data;
 use poem_openapi::param::{Path, Query};
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter,
-    QueryOrder, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter, QueryOrder, Set};
 use tokio::sync::Mutex;
 use uuid::Uuid;
-use omnitron_common::{
-    Role as RoleConfig, User as UserConfig, UserRequireCredentialsPolicy, OmnitronError,
-};
-use omnitron_db_entities::{Role, User, UserRoleAssignment};
 
 use super::AnySecurityScheme;
 
 #[derive(Object)]
 struct CreateUserRequest {
-    username: String,
+  username: String,
 }
 #[derive(Object)]
 struct UserDataRequest {
-    username: String,
-    credential_policy: Option<UserRequireCredentialsPolicy>,
+  username: String,
+  credential_policy: Option<UserRequireCredentialsPolicy>,
 }
 
 #[derive(ApiResponse)]
 enum GetUsersResponse {
-    #[oai(status = 200)]
-    Ok(Json<Vec<UserConfig>>),
+  #[oai(status = 200)]
+  Ok(Json<Vec<UserConfig>>),
 }
 #[derive(ApiResponse)]
 enum CreateUserResponse {
-    #[oai(status = 201)]
-    Created(Json<UserConfig>),
+  #[oai(status = 201)]
+  Created(Json<UserConfig>),
 
-    #[oai(status = 400)]
-    BadRequest(Json<String>),
+  #[oai(status = 400)]
+  BadRequest(Json<String>),
 }
 
 pub struct ListApi;
 
 #[OpenApi]
 impl ListApi {
-    #[oai(path = "/users", method = "get", operation_id = "get_users")]
-    async fn api_get_all_users(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        search: Query<Option<String>>,
-        _auth: AnySecurityScheme,
-    ) -> Result<GetUsersResponse, OmnitronError> {
-        let db = db.lock().await;
+  #[oai(path = "/users", method = "get", operation_id = "get_users")]
+  async fn api_get_all_users(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    search: Query<Option<String>>,
+    _auth: AnySecurityScheme,
+  ) -> Result<GetUsersResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        let mut users = User::Entity::find().order_by_asc(User::Column::Username);
+    let mut users = User::Entity::find().order_by_asc(User::Column::Username);
 
-        if let Some(ref search) = *search {
-            let search = format!("%{search}%");
-            users = users.filter(User::Column::Username.like(search));
-        }
-
-        let users = users.all(&*db).await.map_err(OmnitronError::from)?;
-
-        let users: Result<Vec<UserConfig>, _> = users.into_iter().map(|t| t.try_into()).collect();
-        let users = users.map_err(OmnitronError::from)?;
-
-        Ok(GetUsersResponse::Ok(Json(users)))
+    if let Some(ref search) = *search {
+      let search = format!("%{search}%");
+      users = users.filter(User::Column::Username.like(search));
     }
 
-    #[oai(path = "/users", method = "post", operation_id = "create_user")]
-    async fn api_create_user(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        body: Json<CreateUserRequest>,
-        _auth: AnySecurityScheme,
-    ) -> Result<CreateUserResponse, OmnitronError> {
-        if body.username.is_empty() {
-            return Ok(CreateUserResponse::BadRequest(Json("name".into())));
-        }
+    let users = users.all(&*db).await.map_err(OmnitronError::from)?;
 
-        let db = db.lock().await;
+    let users: Result<Vec<UserConfig>, _> = users.into_iter().map(|t| t.try_into()).collect();
+    let users = users.map_err(OmnitronError::from)?;
 
-        let values = User::ActiveModel {
-            id: Set(Uuid::new_v4()),
-            username: Set(body.username.clone()),
-            credential_policy: Set(
-                serde_json::to_value(UserRequireCredentialsPolicy::default())
-                    .map_err(OmnitronError::from)?,
-            ),
-        };
+    Ok(GetUsersResponse::Ok(Json(users)))
+  }
 
-        let user = values.insert(&*db).await.map_err(OmnitronError::from)?;
-
-        Ok(CreateUserResponse::Created(Json(
-            user.try_into().map_err(OmnitronError::from)?,
-        )))
+  #[oai(path = "/users", method = "post", operation_id = "create_user")]
+  async fn api_create_user(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    body: Json<CreateUserRequest>,
+    _auth: AnySecurityScheme,
+  ) -> Result<CreateUserResponse, OmnitronError> {
+    if body.username.is_empty() {
+      return Ok(CreateUserResponse::BadRequest(Json("name".into())));
     }
+
+    let db = db.lock().await;
+
+    let values = User::ActiveModel {
+      id: Set(Uuid::new_v4()),
+      username: Set(body.username.clone()),
+      credential_policy: Set(serde_json::to_value(UserRequireCredentialsPolicy::default()).map_err(OmnitronError::from)?),
+    };
+
+    let user = values.insert(&*db).await.map_err(OmnitronError::from)?;
+
+    Ok(CreateUserResponse::Created(Json(
+      user.try_into().map_err(OmnitronError::from)?,
+    )))
+  }
 }
 
 #[derive(ApiResponse)]
 enum GetUserResponse {
-    #[oai(status = 200)]
-    Ok(Json<UserConfig>),
-    #[oai(status = 404)]
-    NotFound,
+  #[oai(status = 200)]
+  Ok(Json<UserConfig>),
+  #[oai(status = 404)]
+  NotFound,
 }
 
 #[derive(ApiResponse)]
 enum UpdateUserResponse {
-    #[oai(status = 200)]
-    Ok(Json<UserConfig>),
-    #[oai(status = 404)]
-    NotFound,
+  #[oai(status = 200)]
+  Ok(Json<UserConfig>),
+  #[oai(status = 404)]
+  NotFound,
 }
 
 #[derive(ApiResponse)]
 enum DeleteUserResponse {
-    #[oai(status = 204)]
-    Deleted,
+  #[oai(status = 204)]
+  Deleted,
 
-    #[oai(status = 404)]
-    NotFound,
+  #[oai(status = 404)]
+  NotFound,
 }
 
 pub struct DetailApi;
 
 #[OpenApi]
 impl DetailApi {
-    #[oai(path = "/users/:id", method = "get", operation_id = "get_user")]
-    async fn api_get_user(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<GetUserResponse, OmnitronError> {
-        let db = db.lock().await;
+  #[oai(path = "/users/:id", method = "get", operation_id = "get_user")]
+  async fn api_get_user(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<GetUserResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
-            return Ok(GetUserResponse::NotFound);
-        };
+    let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
+      return Ok(GetUserResponse::NotFound);
+    };
 
-        Ok(GetUserResponse::Ok(Json(user.try_into()?)))
-    }
+    Ok(GetUserResponse::Ok(Json(user.try_into()?)))
+  }
 
-    #[oai(path = "/users/:id", method = "put", operation_id = "update_user")]
-    async fn api_update_user(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        body: Json<UserDataRequest>,
-        id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<UpdateUserResponse, OmnitronError> {
-        let db = db.lock().await;
+  #[oai(path = "/users/:id", method = "put", operation_id = "update_user")]
+  async fn api_update_user(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    body: Json<UserDataRequest>,
+    id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<UpdateUserResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
-            return Ok(UpdateUserResponse::NotFound);
-        };
+    let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
+      return Ok(UpdateUserResponse::NotFound);
+    };
 
-        let mut model: User::ActiveModel = user.into();
-        model.username = Set(body.username.clone());
-        model.credential_policy =
-            Set(serde_json::to_value(body.credential_policy.clone())
-                .map_err(OmnitronError::from)?);
-        let user = model.update(&*db).await?;
+    let mut model: User::ActiveModel = user.into();
+    model.username = Set(body.username.clone());
+    model.credential_policy = Set(serde_json::to_value(body.credential_policy.clone()).map_err(OmnitronError::from)?);
+    let user = model.update(&*db).await?;
 
-        Ok(UpdateUserResponse::Ok(Json(
-            user.try_into().map_err(OmnitronError::from)?,
-        )))
-    }
+    Ok(UpdateUserResponse::Ok(Json(user.try_into().map_err(OmnitronError::from)?)))
+  }
 
-    #[oai(path = "/users/:id", method = "delete", operation_id = "delete_user")]
-    async fn api_delete_user(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<DeleteUserResponse, OmnitronError> {
-        let db = db.lock().await;
+  #[oai(path = "/users/:id", method = "delete", operation_id = "delete_user")]
+  async fn api_delete_user(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<DeleteUserResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
-            return Ok(DeleteUserResponse::NotFound);
-        };
+    let Some(user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
+      return Ok(DeleteUserResponse::NotFound);
+    };
 
-        UserRoleAssignment::Entity::delete_many()
-            .filter(UserRoleAssignment::Column::UserId.eq(user.id))
-            .exec(&*db)
-            .await?;
+    UserRoleAssignment::Entity::delete_many()
+      .filter(UserRoleAssignment::Column::UserId.eq(user.id))
+      .exec(&*db)
+      .await?;
 
-        user.delete(&*db).await?;
-        Ok(DeleteUserResponse::Deleted)
-    }
+    user.delete(&*db).await?;
+    Ok(DeleteUserResponse::Deleted)
+  }
 }
 
 #[derive(ApiResponse)]
 enum GetUserRolesResponse {
-    #[oai(status = 200)]
-    Ok(Json<Vec<RoleConfig>>),
-    #[oai(status = 404)]
-    NotFound,
+  #[oai(status = 200)]
+  Ok(Json<Vec<RoleConfig>>),
+  #[oai(status = 404)]
+  NotFound,
 }
 
 #[derive(ApiResponse)]
 enum AddUserRoleResponse {
-    #[oai(status = 201)]
-    Created,
-    #[oai(status = 409)]
-    AlreadyExists,
+  #[oai(status = 201)]
+  Created,
+  #[oai(status = 409)]
+  AlreadyExists,
 }
 
 #[derive(ApiResponse)]
 enum DeleteUserRoleResponse {
-    #[oai(status = 204)]
-    Deleted,
-    #[oai(status = 404)]
-    NotFound,
+  #[oai(status = 204)]
+  Deleted,
+  #[oai(status = 404)]
+  NotFound,
 }
 
 pub struct RolesApi;
 
 #[OpenApi]
 impl RolesApi {
-    #[oai(
-        path = "/users/:id/roles",
-        method = "get",
-        operation_id = "get_user_roles"
-    )]
-    async fn api_get_user_roles(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<GetUserRolesResponse, OmnitronError> {
-        let db = db.lock().await;
+  #[oai(path = "/users/:id/roles", method = "get", operation_id = "get_user_roles")]
+  async fn api_get_user_roles(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<GetUserRolesResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        let Some((_, roles)) = User::Entity::find_by_id(*id)
-            .find_with_related(Role::Entity)
-            .all(&*db)
-            .await
-            .map(|x| x.into_iter().next())
-            .map_err(OmnitronError::from)?
-        else {
-            return Ok(GetUserRolesResponse::NotFound);
-        };
+    let Some((_, roles)) = User::Entity::find_by_id(*id)
+      .find_with_related(Role::Entity)
+      .all(&*db)
+      .await
+      .map(|x| x.into_iter().next())
+      .map_err(OmnitronError::from)?
+    else {
+      return Ok(GetUserRolesResponse::NotFound);
+    };
 
-        Ok(GetUserRolesResponse::Ok(Json(
-            roles.into_iter().map(|x| x.into()).collect(),
-        )))
+    Ok(GetUserRolesResponse::Ok(Json(roles.into_iter().map(|x| x.into()).collect())))
+  }
+
+  #[oai(path = "/users/:id/roles/:role_id", method = "post", operation_id = "add_user_role")]
+  async fn api_add_user_role(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    id: Path<Uuid>,
+    role_id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<AddUserRoleResponse, OmnitronError> {
+    let db = db.lock().await;
+
+    if !UserRoleAssignment::Entity::find()
+      .filter(UserRoleAssignment::Column::UserId.eq(id.0))
+      .filter(UserRoleAssignment::Column::RoleId.eq(role_id.0))
+      .all(&*db)
+      .await
+      .map_err(OmnitronError::from)?
+      .is_empty()
+    {
+      return Ok(AddUserRoleResponse::AlreadyExists);
     }
 
-    #[oai(
-        path = "/users/:id/roles/:role_id",
-        method = "post",
-        operation_id = "add_user_role"
-    )]
-    async fn api_add_user_role(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        id: Path<Uuid>,
-        role_id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<AddUserRoleResponse, OmnitronError> {
-        let db = db.lock().await;
+    let values = UserRoleAssignment::ActiveModel {
+      user_id: Set(id.0),
+      role_id: Set(role_id.0),
+      ..Default::default()
+    };
 
-        if !UserRoleAssignment::Entity::find()
-            .filter(UserRoleAssignment::Column::UserId.eq(id.0))
-            .filter(UserRoleAssignment::Column::RoleId.eq(role_id.0))
-            .all(&*db)
-            .await
-            .map_err(OmnitronError::from)?
-            .is_empty()
-        {
-            return Ok(AddUserRoleResponse::AlreadyExists);
-        }
+    values.insert(&*db).await.map_err(OmnitronError::from)?;
 
-        let values = UserRoleAssignment::ActiveModel {
-            user_id: Set(id.0),
-            role_id: Set(role_id.0),
-            ..Default::default()
-        };
+    Ok(AddUserRoleResponse::Created)
+  }
 
-        values.insert(&*db).await.map_err(OmnitronError::from)?;
+  #[oai(path = "/users/:id/roles/:role_id", method = "delete", operation_id = "delete_user_role")]
+  async fn api_delete_user_role(
+    &self,
+    db: Data<&Arc<Mutex<DatabaseConnection>>>,
+    id: Path<Uuid>,
+    role_id: Path<Uuid>,
+    _auth: AnySecurityScheme,
+  ) -> Result<DeleteUserRoleResponse, OmnitronError> {
+    let db = db.lock().await;
 
-        Ok(AddUserRoleResponse::Created)
-    }
+    let Some(_user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
+      return Ok(DeleteUserRoleResponse::NotFound);
+    };
 
-    #[oai(
-        path = "/users/:id/roles/:role_id",
-        method = "delete",
-        operation_id = "delete_user_role"
-    )]
-    async fn api_delete_user_role(
-        &self,
-        db: Data<&Arc<Mutex<DatabaseConnection>>>,
-        id: Path<Uuid>,
-        role_id: Path<Uuid>,
-        _auth: AnySecurityScheme,
-    ) -> Result<DeleteUserRoleResponse, OmnitronError> {
-        let db = db.lock().await;
+    let Some(_role) = Role::Entity::find_by_id(role_id.0).one(&*db).await? else {
+      return Ok(DeleteUserRoleResponse::NotFound);
+    };
 
-        let Some(_user) = User::Entity::find_by_id(id.0).one(&*db).await? else {
-            return Ok(DeleteUserRoleResponse::NotFound);
-        };
+    let Some(model) = UserRoleAssignment::Entity::find()
+      .filter(UserRoleAssignment::Column::UserId.eq(id.0))
+      .filter(UserRoleAssignment::Column::RoleId.eq(role_id.0))
+      .one(&*db)
+      .await
+      .map_err(OmnitronError::from)?
+    else {
+      return Ok(DeleteUserRoleResponse::NotFound);
+    };
 
-        let Some(_role) = Role::Entity::find_by_id(role_id.0).one(&*db).await? else {
-            return Ok(DeleteUserRoleResponse::NotFound);
-        };
+    model.delete(&*db).await.map_err(OmnitronError::from)?;
 
-        let Some(model) = UserRoleAssignment::Entity::find()
-            .filter(UserRoleAssignment::Column::UserId.eq(id.0))
-            .filter(UserRoleAssignment::Column::RoleId.eq(role_id.0))
-            .one(&*db)
-            .await
-            .map_err(OmnitronError::from)?
-        else {
-            return Ok(DeleteUserRoleResponse::NotFound);
-        };
-
-        model.delete(&*db).await.map_err(OmnitronError::from)?;
-
-        Ok(DeleteUserRoleResponse::Deleted)
-    }
+    Ok(DeleteUserRoleResponse::Deleted)
+  }
 }

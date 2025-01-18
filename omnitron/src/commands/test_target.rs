@@ -1,68 +1,60 @@
 use anyhow::Result;
-use tracing::*;
 use omnitron_common::TargetOptions;
 use omnitron_core::{ProtocolServer, Services, TargetTestError};
+use tracing::*;
 
 use crate::config::load_config;
 
 pub(crate) async fn command(cli: &crate::Cli, target_name: &String) -> Result<()> {
-    let config = load_config(&cli.config, true)?;
-    let services = Services::new(config.clone(), None).await?;
+  let config = load_config(&cli.config, true)?;
+  let services = Services::new(config.clone(), None).await?;
 
-    let Some(target) = services
-        .config_provider
-        .lock()
-        .await
-        .list_targets()
-        .await?
-        .iter()
-        .find(|x| &x.name == target_name)
-        .cloned()
-    else {
-        error!("Target not found: {}", target_name);
-        return Ok(());
-    };
+  let Some(target) = services
+    .config_provider
+    .lock()
+    .await
+    .list_targets()
+    .await?
+    .iter()
+    .find(|x| &x.name == target_name)
+    .cloned()
+  else {
+    error!("Target not found: {}", target_name);
+    return Ok(());
+  };
 
-    let s: Box<dyn ProtocolServer> = match target.options {
-        TargetOptions::Ssh(_) => {
-            Box::new(omnitron_protocol_ssh::SSHProtocolServer::new(&services).await?)
-        }
-        TargetOptions::Http(_) => {
-            Box::new(omnitron_protocol_http::HTTPProtocolServer::new(&services).await?)
-        }
-        TargetOptions::MySql(_) => {
-            Box::new(omnitron_protocol_mysql::MySQLProtocolServer::new(&services).await?)
-        }
-        TargetOptions::Postgres(_) => {
-            Box::new(omnitron_protocol_postgres::PostgresProtocolServer::new(&services).await?)
-        }
-        TargetOptions::WebAdmin(_) => {
-            error!("Unsupported target type");
-            return Ok(());
-        }
-    };
-
-    match s.test_target(target).await {
-        Err(TargetTestError::AuthenticationError) => {
-            error!("Authentication failed");
-        }
-        Err(TargetTestError::ConnectionError(error)) => {
-            error!(?error, "Connection error");
-        }
-        Err(TargetTestError::Io(error)) => {
-            error!(?error, "I/O error");
-        }
-        Err(TargetTestError::Misconfigured(error)) => {
-            error!(?error, "Misconfigured");
-        }
-        Err(TargetTestError::Unreachable) => {
-            error!("Target is unreachable");
-        }
-        Ok(()) => {
-            info!("Connection successful!");
-            return Ok(());
-        }
+  let s: Box<dyn ProtocolServer> = match target.options {
+    TargetOptions::Ssh(_) => Box::new(omnitron_protocol_ssh::SSHProtocolServer::new(&services).await?),
+    TargetOptions::Http(_) => Box::new(omnitron_protocol_http::HTTPProtocolServer::new(&services).await?),
+    TargetOptions::MySql(_) => Box::new(omnitron_protocol_mysql::MySQLProtocolServer::new(&services).await?),
+    TargetOptions::Postgres(_) => Box::new(omnitron_protocol_postgres::PostgresProtocolServer::new(&services).await?),
+    TargetOptions::WebAdmin(_) => {
+      error!("Unsupported target type");
+      return Ok(());
     }
+  };
 
-    anyhow::bail!("Connection test failed")
+  match s.test_target(target).await {
+    Err(TargetTestError::AuthenticationError) => {
+      error!("Authentication failed");
+    }
+    Err(TargetTestError::ConnectionError(error)) => {
+      error!(?error, "Connection error");
+    }
+    Err(TargetTestError::Io(error)) => {
+      error!(?error, "I/O error");
+    }
+    Err(TargetTestError::Misconfigured(error)) => {
+      error!(?error, "Misconfigured");
+    }
+    Err(TargetTestError::Unreachable) => {
+      error!("Target is unreachable");
+    }
+    Ok(()) => {
+      info!("Connection successful!");
+      return Ok(());
+    }
+  }
+
+  anyhow::bail!("Connection test failed")
 }

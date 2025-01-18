@@ -5,13 +5,12 @@ use regex::Regex;
 
 #[allow(clippy::unwrap_used)]
 pub fn main() {
-    let api_service =
-        OpenApiService::new(api::get(), "Omnitron Web Admin", env!("CARGO_PKG_VERSION"))
-            .server("/@omnitron/admin/api");
+  let api_service =
+    OpenApiService::new(api::get(), "Omnitron Web Admin", env!("CARGO_PKG_VERSION")).server("/@omnitron/admin/api");
 
-    let spec = api_service.spec();
-    let re = Regex::new(r"PaginatedResponse<(?P<name>\w+)>").unwrap();
-    let spec = re.replace_all(&spec, "Paginated$name");
+  let spec = api_service.spec();
+  let re = Regex::new(r"PaginatedResponse<(?P<name>\w+)>").unwrap();
+  let spec = re.replace_all(&spec, "Paginated$name");
 
-    println!("{spec}");
+  println!("{spec}");
 }

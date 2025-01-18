@@ -3,8 +3,8 @@ use poem::IntoResponse;
 use tracing::error;
 
 pub fn error_page(e: poem::Error) -> impl IntoResponse {
-    error!("{:?}", e);
-    poem::web::Html(format!(
+  error!("{:?}", e);
+  poem::web::Html(format!(
         r#"<!DOCTYPE html>
         <style>
             body {{

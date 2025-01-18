@@ -20,7 +20,6 @@
     let busy = $state(false)
     let otpInput: HTMLInputElement|undefined = $state()
     let authState: ApiAuthState|undefined = $state()
-    let ssoProvidersPromise = api.getSsoProviders()
 
     const nextURL = new URLSearchParams(get(querystring)).get('next') ?? undefined
     const serverErrorMessage = new URLSearchParams(location.search).get('login_error')
@@ -52,15 +51,6 @@
     async function continueWithState () {
         if (authState === ApiAuthState.Success) {
             success()
-        }
-        if (authState === ApiAuthState.SsoNeeded) {
-            const providers = await ssoProvidersPromise
-            if (!providers.length) {
-                // todo
-            }
-            if (providers.length === 1) {
-                startSSO(providers[0]!)
-            }
         }
         if (authState === ApiAuthState.OtpNeeded) {
             setTimeout(() => {
@@ -122,17 +112,6 @@
         if (event.key === 'Enter') {
             login()
             event.preventDefault()
-        }
-    }
-
-    async function startSSO (provider: SsoProviderDescription) {
-        busy = true
-        try {
-            const p = await api.startSso({ name: provider.name, next: nextURL })
-            location.href = p.url
-        } catch (err) {
-            error = await stringifyError(err)
-            busy = false
         }
     }
 </script>
@@ -207,33 +186,6 @@
         {/if}
     </form>
 
-    {#if authState === ApiAuthState.SsoNeeded || authState === ApiAuthState.NotStarted || authState === ApiAuthState.Failed}
-        <Loadable promise={ssoProvidersPromise}>
-            {#snippet children(ssoProviders)}
-                <div class="mt-5 sso-buttons">
-                    {#each ssoProviders as ssoProvider}
-                        <button
-                            class="btn btn-secondary"
-                            disabled={busy}
-                            onclick={() => startSSO(ssoProvider)}
-                        >
-                            {#if ssoProvider.kind === SsoProviderKind.Google}
-                                <Fa fw class="me-2" icon={faGoogle} />
-                            {/if}
-                            {#if ssoProvider.kind === SsoProviderKind.Azure}
-                                <Fa fw class="me-2" icon={faMicrosoft} />
-                            {/if}
-                            {#if ssoProvider.kind === SsoProviderKind.Apple}
-                                <Fa fw class="me-2" icon={faApple} />
-                            {/if}
-                            {ssoProvider.label}
-                        </button>
-                    {/each}
-                </div>
-            {/snippet}
-        </Loadable>
-    {/if}
-
     {#if authState !== ApiAuthState.NotStarted && authState !== ApiAuthState.Failed}
         <button
             class="btn w-100 mt-3 btn-secondary"
@@ -247,19 +199,5 @@
 <style lang="scss">
     h1 {
         font-size: 3rem;
-    }
-
-    .sso-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.85rem 1rem;
-
-        button {
-            flex: 1 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-wrap: nowrap;
-        }
     }
 </style>

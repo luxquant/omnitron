@@ -14,23 +14,20 @@ use crate::mysql::protocol::Capabilities;
 /// prior MySQL versions.
 #[derive(Debug)]
 pub struct EofPacket {
-    pub warnings: u16,
-    pub status: Status,
+  pub warnings: u16,
+  pub status: Status,
 }
 
 impl Decode<'_, Capabilities> for EofPacket {
-    fn decode_with(mut buf: Bytes, _: Capabilities) -> Result<Self, Error> {
-        let header = buf.get_u8();
-        if header != 0xfe {
-            return Err(err_protocol!(
-                "expected 0xfe (EOF_Packet) but found 0x{:x}",
-                header
-            ));
-        }
-
-        let warnings = buf.get_u16_le();
-        let status = Status::from_bits_truncate(buf.get_u16_le());
-
-        Ok(Self { status, warnings })
+  fn decode_with(mut buf: Bytes, _: Capabilities) -> Result<Self, Error> {
+    let header = buf.get_u8();
+    if header != 0xfe {
+      return Err(err_protocol!("expected 0xfe (EOF_Packet) but found 0x{:x}", header));
     }
+
+    let warnings = buf.get_u16_le();
+    let status = Status::from_bits_truncate(buf.get_u16_le());
+
+    Ok(Self { status, warnings })
+  }
 }

@@ -1,4 +1,3 @@
-sso_providers: []
 recordings:
   enable: true
   path: /Users/taaliman/projects/omnitron/release/data/recordings

@@ -175,24 +175,6 @@
             Your credential policy requires using a public key for authentication. Without one, you won't be able to log in.
         </Alert>
     {/if}
-
-    {#if creds.sso.length > 0}
-    <div class="d-flex align-items-center mt-4 mb-2">
-        <h4 class="m-0">Single sign-on</h4>
-    </div>
-
-    <div class="list-group list-group-flush mb-3">
-        {#each creds.sso as credential}
-        <div class="list-group-item credential">
-            <Fa fw icon={faIdBadge} />
-            <span class="label ms-3">
-                {credential.email}
-                {#if credential.provider} ({credential.provider}){/if}
-            </span>
-        </div>
-        {/each}
-    </div>
-    {/if}
 {/if}
 </Loadable>
 

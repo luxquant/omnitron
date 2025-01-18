@@ -21,26 +21,26 @@ pub struct Migrator;
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
-    fn migrations() -> Vec<Box<dyn MigrationTrait>> {
-        vec![
-            Box::new(m00001_create_ticket::Migration),
-            Box::new(m00002_create_session::Migration),
-            Box::new(m00003_create_recording::Migration),
-            Box::new(m00004_create_known_host::Migration),
-            Box::new(m00005_create_log_entry::Migration),
-            Box::new(m00006_add_session_protocol::Migration),
-            Box::new(m00007_targets_and_roles::Migration),
-            Box::new(m00008_users::Migration),
-            Box::new(m00009_credential_models::Migration),
-            Box::new(m00010_parameters::Migration),
-            Box::new(m00011_rsa_key_algos::Migration),
-            Box::new(m00012_add_openssh_public_key_label::Migration),
-            Box::new(m00013_add_openssh_public_key_dates::Migration),
-            Box::new(m00014_api_tokens::Migration),
-        ]
-    }
+  fn migrations() -> Vec<Box<dyn MigrationTrait>> {
+    vec![
+      Box::new(m00001_create_ticket::Migration),
+      Box::new(m00002_create_session::Migration),
+      Box::new(m00003_create_recording::Migration),
+      Box::new(m00004_create_known_host::Migration),
+      Box::new(m00005_create_log_entry::Migration),
+      Box::new(m00006_add_session_protocol::Migration),
+      Box::new(m00007_targets_and_roles::Migration),
+      Box::new(m00008_users::Migration),
+      Box::new(m00009_credential_models::Migration),
+      Box::new(m00010_parameters::Migration),
+      Box::new(m00011_rsa_key_algos::Migration),
+      Box::new(m00012_add_openssh_public_key_label::Migration),
+      Box::new(m00013_add_openssh_public_key_dates::Migration),
+      Box::new(m00014_api_tokens::Migration),
+    ]
+  }
 }
 
 pub async fn migrate_database(connection: &DatabaseConnection) -> Result<(), DbErr> {
-    Migrator::up(connection, None).await
+  Migrator::up(connection, None).await
 }

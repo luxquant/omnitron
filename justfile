@@ -1,4 +1,4 @@
-projects := "omnitron omnitron-admin omnitron-common omnitron-db-entities omnitron-db-migrations omnitron-database-protocols omnitron-protocol-ssh omnitron-protocol-mysql omnitron-protocol-postgres omnitron-protocol-http omnitron-core omnitron-sso"
+projects := "omnitron omnitron-admin omnitron-common omnitron-db-entities omnitron-db-migrations omnitron-database-protocols omnitron-protocol-ssh omnitron-protocol-mysql omnitron-protocol-postgres omnitron-protocol-http omnitron-core"
 
 run $RUST_BACKTRACE='1' *ARGS='run':
      cargo run --all-features -- --config config.yaml {{ARGS}}

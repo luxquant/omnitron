@@ -46,7 +46,6 @@ tracing.workspace = true
 tracing-core = "0.1"
 url = "2.2"
 uuid = { version = "1.3", features = ["v4", "serde"] }
-omnitron-sso = { version = "*", path = "../omnitron-sso" }
 rustls = "0.23"
 rustls-pemfile = "1.0"
 webpki = "0.22"

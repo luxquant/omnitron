@@ -14,7 +14,7 @@ anyhow = { version = "1.0", features = ["backtrace"] }
 async-trait = "0.1.85"
 atty = "0.2"
 bytes.workspace = true
-clap = { version = "4.0", features = ["derive"] }
+clap = { version = "4.5.26", features = ["derive"] }
 config = { version = "0.13", features = ["yaml"], default-features = false }
 console = { version = "0.15", default-features = false }
 console-subscriber = { version = "0.1", optional = true }

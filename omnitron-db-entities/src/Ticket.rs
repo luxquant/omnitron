@@ -8,21 +8,21 @@ use uuid::Uuid;
 #[sea_orm(table_name = "tickets")]
 #[oai(rename = "Ticket")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: Uuid,
-    #[oai(skip)]
-    pub secret: String,
-    pub username: String,
-    pub target: String,
-    pub uses_left: Option<i32>,
-    pub expiry: Option<DateTime<Utc>>,
-    pub created: DateTime<Utc>,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: Uuid,
+  #[oai(skip)]
+  pub secret: String,
+  pub username: String,
+  pub target: String,
+  pub uses_left: Option<i32>,
+  pub expiry: Option<DateTime<Utc>>,
+  pub created: DateTime<Utc>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::Session::Entity")]
-    Sessions,
+  #[sea_orm(has_many = "super::Session::Entity")]
+  Sessions,
 }
 
 impl ActiveModelBehavior for ActiveModel {}

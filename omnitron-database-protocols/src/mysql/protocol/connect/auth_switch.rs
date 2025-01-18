@@ -10,49 +10,43 @@ use crate::mysql::protocol::Capabilities;
 
 #[derive(Debug)]
 pub struct AuthSwitchRequest {
-    pub plugin: AuthPlugin,
-    pub data: Bytes,
+  pub plugin: AuthPlugin,
+  pub data: Bytes,
 }
 
 impl Decode<'_> for AuthSwitchRequest {
-    fn decode_with(mut buf: Bytes, _: ()) -> Result<Self, Error> {
-        let header = buf.get_u8();
-        if header != 0xfe {
-            return Err(err_protocol!(
-                "expected 0xfe (AUTH_SWITCH) but found 0x{:x}",
-                header
-            ));
-        }
-
-        let plugin = buf.get_str_nul()?.parse()?;
-
-        // See: https://github.com/mysql/mysql-server/blob/ea7d2e2d16ac03afdd9cb72a972a95981107bf51/sql/auth/sha2_password.cc#L942
-        if buf.len() != 21 {
-            return Err(err_protocol!(
-                "expected 21 bytes but found {} bytes",
-                buf.len()
-            ));
-        }
-        let data = buf.get_bytes(20);
-        buf.advance(1); // NUL-terminator
-
-        Ok(Self { plugin, data })
+  fn decode_with(mut buf: Bytes, _: ()) -> Result<Self, Error> {
+    let header = buf.get_u8();
+    if header != 0xfe {
+      return Err(err_protocol!("expected 0xfe (AUTH_SWITCH) but found 0x{:x}", header));
     }
+
+    let plugin = buf.get_str_nul()?.parse()?;
+
+    // See: https://github.com/mysql/mysql-server/blob/ea7d2e2d16ac03afdd9cb72a972a95981107bf51/sql/auth/sha2_password.cc#L942
+    if buf.len() != 21 {
+      return Err(err_protocol!("expected 21 bytes but found {} bytes", buf.len()));
+    }
+    let data = buf.get_bytes(20);
+    buf.advance(1); // NUL-terminator
+
+    Ok(Self { plugin, data })
+  }
 }
 
 impl Encode<'_, ()> for AuthSwitchRequest {
-    fn encode_with(&self, buf: &mut Vec<u8>, _: ()) {
-        buf.put_u8(0xfe);
-        buf.put_str_nul(self.plugin.name());
-        buf.extend(&self.data);
-    }
+  fn encode_with(&self, buf: &mut Vec<u8>, _: ()) {
+    buf.put_u8(0xfe);
+    buf.put_str_nul(self.plugin.name());
+    buf.extend(&self.data);
+  }
 }
 
 #[derive(Debug)]
 pub struct AuthSwitchResponse(pub Vec<u8>);
 
 impl Encode<'_, Capabilities> for AuthSwitchResponse {
-    fn encode_with(&self, buf: &mut Vec<u8>, _: Capabilities) {
-        buf.extend_from_slice(&self.0);
-    }
+  fn encode_with(&self, buf: &mut Vec<u8>, _: Capabilities) {
+    buf.extend_from_slice(&self.0);
+  }
 }
