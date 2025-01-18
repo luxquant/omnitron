@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Omnitron HTTP proxy",
-    "version": "0.12.0"
+    "version": "0.1.0"
   },
   "servers": [
     {
@@ -828,17 +828,6 @@
           "postgres": {
             "type": "integer",
             "format": "uint16"
-          }
-        }
-      },
-      "StartSloResponseParams": {
-        "type": "object",
-        "required": [
-          "url"
-        ],
-        "properties": {
-          "url": {
-            "type": "string"
           }
         }
       },
