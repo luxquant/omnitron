@@ -1,72 +1,78 @@
 #![feature(type_alias_impl_trait)]
-mod commands;
-mod config;
-mod logging;
-use std::path::PathBuf;
 
-use anyhow::Result;
+mod daemon;
+mod gate;
+mod globals;
+mod helpers;
+mod logging;
+
+use anyhow::{Ok, Result};
 use clap::{ArgAction, Parser};
+use gate::config::load_config;
 use logging::init_logging;
+use macros_rs::fmt::{str, string};
 use tracing::*;
 
-use crate::config::load_config;
-
 #[derive(clap::Parser)]
-#[clap(author, version, about, long_about = None)]
-#[clap(propagate_version = true)]
+#[clap(author, version =str!(helpers::get_version(false)), about, long_about = None, arg_required_else_help = true, propagate_version = true)]
 pub struct Cli {
   #[clap(subcommand)]
   command: Commands,
-
-  #[clap(long, short, default_value = "/etc/omnitron.yaml", action=ArgAction::Set)]
-  config: PathBuf,
 
   #[clap(long, short, action=ArgAction::Count)]
   debug: u8,
 }
 
 #[derive(clap::Subcommand)]
-pub(crate) enum Commands {
-  /// Run first-time setup and generate a config file
-  Setup {
-    /// Database URL
-    #[clap(long)]
-    database_url: Option<String>,
+enum Commands {
+  /// SSH/HTTP/MySQL/PostgreSQL/etc gate.
+  #[command(visible_alias = "gt")]
+  Gate {
+    #[command(subcommand)]
+    command: GateCommands,
   },
-  /// Run first-time setup non-interactively
-  UnattendedSetup {
-    /// Database URL
-    #[clap(long)]
-    database_url: Option<String>,
-
-    /// Directory to store data in
-    #[clap(long)]
-    data_path: String,
-
-    /// HTTP port
-    #[clap(long)]
-    http_port: u16,
-
-    /// Enable SSH and set port
-    #[clap(long)]
-    ssh_port: Option<u16>,
-
-    /// Enable MySQL and set port
-    #[clap(long)]
-    mysql_port: Option<u16>,
-
-    /// Enable PostgreSQL and set port
-    #[clap(long)]
-    postgres_port: Option<u16>,
-
-    /// Enable session recording
-    #[clap(long)]
-    record_sessions: bool,
-
-    /// Password for the initial user (required if OMNITRON_ADMIN_PASSWORD env var is not set)
-    #[clap(long)]
-    admin_password: Option<String>,
+  /// Process manager
+  Pm {
+    #[command(subcommand)]
+    command: PmCommands,
   },
+  /// Get daemon info
+  #[command(visible_alias = "health", visible_alias = "status")]
+  Info {
+    /// Format output
+    #[arg(long, default_value_t = string!("default"))]
+    format: String,
+  },
+  /// Start daemon
+  #[command(visible_alias = "start")]
+  Up,
+  // /// Reset process index
+  // #[command(visible_alias = "reset_position")]
+  // Reset,
+  /// Stop daemon
+  #[command(visible_alias = "kill", visible_alias = "stop")]
+  Down,
+  // /// Restart daemon
+  // #[command(visible_alias = "restart", visible_alias = "start")]
+  // Restore {
+  //   /// Daemon api
+  //   #[arg(long)]
+  //   api: bool,
+  //   /// WebUI using api
+  //   #[arg(long)]
+  //   webui: bool,
+  // },
+  // /// Check daemon health
+  // #[command(visible_alias = "info", visible_alias = "status")]
+  // Health {
+  //   /// Format output
+  //   #[arg(long, default_value_t = string!("default"))]
+  //   format: String,
+  // },
+}
+
+#[derive(clap::Subcommand)]
+pub(crate) enum GateCommands {
   /// Show Omnitron's SSH client keys
   ClientKeys,
   /// Run Omnitron
@@ -89,25 +95,324 @@ pub(crate) enum Commands {
   },
 }
 
-async fn _main() -> Result<()> {
-  let cli = Cli::parse();
+#[derive(clap::Subcommand)]
+enum PmDaemon {
+  /// Reset process index
+  #[command(visible_alias = "reset_position")]
+  Reset,
+  /// Restart daemon
+  #[command(visible_alias = "restart", visible_alias = "start")]
+  Restore {
+    /// Daemon api
+    #[arg(long)]
+    api: bool,
+    /// WebUI using api
+    #[arg(long)]
+    webui: bool,
+  },
+}
 
-  init_logging(load_config(&cli.config, false).ok().as_ref(), &cli).await;
+#[derive(clap::Subcommand)]
+enum Server {
+  /// Add new server
+  #[command(visible_alias = "add")]
+  New,
+  /// List servers
+  #[command(visible_alias = "ls")]
+  List {
+    /// Format output
+    #[arg(long, default_value_t = string!("default"))]
+    format: String,
+  },
+  /// Remove server
+  #[command(visible_alias = "rm", visible_alias = "delete")]
+  Remove {
+    /// Server name
+    name: String,
+  },
+  /// Set default server
+  #[command(visible_alias = "set")]
+  Default {
+    /// Server name
+    name: Option<String>,
+  },
+}
+
+// add omnitron restore command
+#[derive(clap::Subcommand)]
+enum PmCommands {
+  /// Import process from environment file
+  #[command(visible_alias = "add")]
+  Import {
+    /// Path of file to import
+    path: String,
+  },
+  /// Export environment file from process
+  #[command(visible_alias = "get")]
+  Export {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Path to export file
+    path: Option<String>,
+  },
+  /// Start/Restart a process
+  #[command(visible_alias = "restart")]
+  Start {
+    /// Process name
+    #[arg(long)]
+    name: Option<String>,
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Args>)]
+    args: omnitron_pm::cli::Args,
+    /// Watch to reload path
+    #[arg(long)]
+    watch: Option<String>,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+    /// Reset environment values
+    #[arg(short, long)]
+    reset_env: bool,
+  },
+  /// Stop/Kill a process
+  #[command(visible_alias = "kill")]
+  Stop {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Stop then remove a process
+  #[command(visible_alias = "rm", visible_alias = "delete")]
+  Remove {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Get env of a process
+  #[command(visible_alias = "cmdline")]
+  Env {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Get information of a process
+  #[command(visible_alias = "info")]
+  Details {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Format output
+    #[arg(long, default_value_t = string!("default"))]
+    format: String,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// List all processes
+  #[command(visible_alias = "ls")]
+  List {
+    /// Format output
+    #[arg(long, default_value_t = string!("default"))]
+    format: String,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Restore all processes
+  #[command(visible_alias = "resurrect")]
+  Restore {
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Save all processes to dumpfile
+  #[command(visible_alias = "store")]
+  Save {
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Get logs from a process
+  Logs {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    #[arg(long, default_value_t = 15, help = "")]
+    lines: usize,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Flush a process log
+  #[command(visible_alias = "clean", visible_alias = "log_rotate")]
+  Flush {
+    #[clap(value_parser = omnitron_pm::cli::validate::<omnitron_pm::cli::Item>)]
+    item: omnitron_pm::cli::Item,
+    /// Server
+    #[arg(short, long)]
+    server: Option<String>,
+  },
+  /// Daemon management
+  #[command(visible_alias = "agent", visible_alias = "bgd")]
+  Daemon {
+    #[command(subcommand)]
+    command: PmDaemon,
+  },
+
+  /// Server management
+  #[command(visible_alias = "remote", visible_alias = "srv")]
+  Server {
+    #[command(subcommand)]
+    command: Server,
+  },
+}
+
+async fn run(cli: &Cli) -> Result<()> {
+  init_logging(load_config(false).ok().as_ref(), cli).await;
 
   match &cli.command {
-    Commands::Run { enable_admin_token } => crate::commands::run::command(&cli, *enable_admin_token).await,
-    Commands::Check => crate::commands::check::command(&cli).await,
-    Commands::TestTarget { target_name } => crate::commands::test_target::command(&cli, target_name).await,
-    Commands::Setup { .. } | Commands::UnattendedSetup { .. } => crate::commands::setup::command(&cli).await,
-    Commands::ClientKeys => crate::commands::client_keys::command(&cli).await,
-    Commands::RecoverAccess { username } => crate::commands::recover_access::command(&cli, username).await,
+    Commands::Up => Ok(()), // This command is executed earlier in main, no handler needed here
+    Commands::Down => {
+      daemon::commands::stop();
+      Ok(())
+    }
+    Commands::Info { format } => {
+      daemon::commands::health(format).await;
+      Ok(())
+    }
+    Commands::Gate { command } => match command {
+      GateCommands::Run { enable_admin_token } => gate::commands::run::command(cli, *enable_admin_token).await,
+      GateCommands::Check => gate::commands::check::command(cli).await,
+      GateCommands::TestTarget { target_name } => gate::commands::test_target::command(cli, target_name).await,
+      GateCommands::ClientKeys => gate::commands::client_keys::command(cli).await,
+      GateCommands::RecoverAccess { username } => gate::commands::recover_access::command(cli, username).await,
+    },
+    Commands::Pm { command } => match command {
+      PmCommands::Import { path } => {
+        omnitron_pm::cli::import::read_hcl(path);
+        Ok(())
+      }
+      PmCommands::Export { item, path } => {
+        omnitron_pm::cli::import::export_hcl(item, path);
+        Ok(())
+      }
+      PmCommands::Start {
+        name,
+        args,
+        watch,
+        server,
+        reset_env,
+      } => {
+        omnitron_pm::cli::start(name, args, watch, reset_env, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Stop { item, server } => {
+        omnitron_pm::cli::stop(item, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Remove { item, server } => {
+        omnitron_pm::cli::remove(item, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Restore { server } => {
+        omnitron_pm::cli::internal::Internal::restore(&omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Save { server } => {
+        omnitron_pm::cli::internal::Internal::save(&omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Env { item, server } => {
+        omnitron_pm::cli::env(item, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Details { item, format, server } => {
+        omnitron_pm::cli::info(item, format, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::List { format, server } => {
+        omnitron_pm::cli::internal::Internal::list(format, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Logs { item, lines, server } => {
+        omnitron_pm::cli::logs(item, lines, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+      PmCommands::Flush { item, server } => {
+        omnitron_pm::cli::flush(item, &omnitron_pm::globals::defaults(server));
+
+        Ok(())
+      }
+
+      PmCommands::Daemon { command } => match command {
+        PmDaemon::Reset => {
+          omnitron_pm::daemon::reset();
+
+          Ok(())
+        }
+        PmDaemon::Restore { api, webui } => {
+          omnitron_pm::daemon::restart(api, webui, false /*level.as_str() != "OFF"*/);
+
+          Ok(())
+        }
+      },
+
+      PmCommands::Server { command } => match command {
+        Server::New => {
+          omnitron_pm::cli::server::new();
+
+          Ok(())
+        }
+        Server::Remove { name } => {
+          omnitron_pm::cli::server::remove(name);
+
+          Ok(())
+        }
+        Server::Default { name } => {
+          omnitron_pm::cli::server::default(name);
+
+          Ok(())
+        }
+        Server::List { format } => {
+          omnitron_pm::cli::server::list(format);
+
+          Ok(())
+        }
+      },
+    },
+  }
+}
+
+fn main() {
+  globals::init();
+
+  let cli = Cli::parse();
+
+  if matches!(&cli.command, Commands::Up) {
+    daemon::commands::start(&cli).unwrap();
+  } else {
+    tokio_main(&cli).unwrap();
   }
 }
 
 #[tokio::main]
-async fn main() {
-  if let Err(error) = _main().await {
+async fn tokio_main(cli: &Cli) -> anyhow::Result<()> {
+  if let Err(error) = run(cli).await {
     error!(?error, "Fatal error");
     std::process::exit(1);
   }
+
+  Ok(())
 }

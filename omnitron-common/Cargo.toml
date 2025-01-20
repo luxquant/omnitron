@@ -1,7 +1,6 @@
 [package]
 name = "omnitron-common"
 version.workspace = true
-authors.workspace = true
 homepage.workspace = true
 repository.workspace = true
 license.workspace = true
@@ -20,8 +19,8 @@ humantime-serde = "1.1"
 futures.workspace = true
 once_cell = "1.17"
 password-hash = "0.4"
-poem = { version = "3.1", features = ["rustls"] }
-poem-openapi = { version = "5.1", features = [
+poem = { version = "3.1.6", features = ["rustls"] }
+poem-openapi = { version = "5.1.5", features = [
     "swagger-ui",
     "chrono",
     "uuid",
@@ -43,7 +42,7 @@ tokio = { version = "1.20", features = ["tracing"] }
 tokio-rustls = "0.26"
 totp-rs = { version = "5.0", features = ["otpauth"] }
 tracing.workspace = true
-tracing-core = "0.1"
+tracing-core = "0.1.33"
 url = "2.2"
 uuid = { version = "1.3", features = ["v4", "serde"] }
 rustls = "0.23"

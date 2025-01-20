@@ -1,7 +1,6 @@
 [package]
 name = "omnitron-db-entities"
 version.workspace = true
-authors.workspace = true
 homepage.workspace = true
 repository.workspace = true
 license.workspace = true
@@ -11,7 +10,7 @@ publish.workspace = true
 [dependencies]
 bytes = "1.4"
 chrono = { version = "0.4", default-features = false, features = ["serde"] }
-poem-openapi = { version = "5.1", features = ["chrono", "uuid"] }
+poem-openapi = { version = "5.1.5", features = ["chrono", "uuid"] }
 sea-orm = { version = "0.12", features = [
     "macros",
     "with-chrono",

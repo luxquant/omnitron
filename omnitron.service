@@ -1,0 +1,25 @@
+# example systemd file. edit as needed
+
+[Unit]
+Description=OMNITRON Daemon
+After=network.target
+
+[Service]
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+User=root
+Type=forking
+WorkingDirectory=/root/.omnitron
+PIDFile=/root/.omnitron/daemon.pid
+Restart=on-failure
+StartLimitInterval=180
+StartLimitBurst=30
+RestartSec=5s
+
+ExecStart=/root/.cargo/bin/omnitron daemon start -vvv
+ExecStop=/root/.cargo/bin/omnitron daemon stop -vvv
+
+[Install]
+WantedBy=multi-user.target

@@ -358,15 +358,6 @@ impl Default for LogConfig {
   }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, Default)]
-pub enum ConfigProviderKind {
-  #[serde(rename = "file")]
-  File,
-  #[serde(rename = "database")]
-  #[default]
-  Database,
-}
-
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct OmnitronConfigStore {
   #[serde(default)]
@@ -392,9 +383,6 @@ pub struct OmnitronConfigStore {
 
   #[serde(default)]
   pub log: LogConfig,
-
-  #[serde(default)]
-  pub config_provider: ConfigProviderKind,
 }
 
 impl Default for OmnitronConfigStore {
@@ -408,7 +396,6 @@ impl Default for OmnitronConfigStore {
       mysql: <_>::default(),
       postgres: <_>::default(),
       log: <_>::default(),
-      config_provider: <_>::default(),
     }
   }
 }
