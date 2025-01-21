@@ -1,6 +1,7 @@
 use std::env;
-use global_placeholders::global;
 use std::path::PathBuf;
+
+use global_placeholders::global;
 
 pub(crate) fn get_version(short: bool) -> String {
   return match short {

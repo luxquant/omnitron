@@ -64,26 +64,10 @@ impl Api {
       authorized_via_ticket: matches!(session.get_auth(), Some(SessionAuthorization::Ticket { .. })),
       ports: if session.is_authenticated() {
         PortsInfo {
-          ssh: if config.store.ssh.enable {
-            Some(config.store.ssh.external_port())
-          } else {
-            None
-          },
-          http: if config.store.http.enable {
-            Some(config.store.http.external_port())
-          } else {
-            None
-          },
-          mysql: if config.store.mysql.enable {
-            Some(config.store.mysql.external_port())
-          } else {
-            None
-          },
-          postgres: if config.store.postgres.enable {
-            Some(config.store.postgres.external_port())
-          } else {
-            None
-          },
+          ssh: Some(config.store.ssh.external_port()),
+          http: Some(config.store.http.external_port()),
+          mysql: Some(config.store.mysql.external_port()),
+          postgres: Some(config.store.postgres.external_port()),
         }
       } else {
         PortsInfo {

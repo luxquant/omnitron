@@ -25,7 +25,7 @@ pub fn init() {
       init!("omnitron.pid", format!("{path}/.omnitron/daemon.pid"));
       init!("omnitron.dump", format!("{path}/.omnitron/process.dump"));
       init!("omnitron.sock", format!("{path}/.omnitron/omnitron.sock"));
-      
+
       init!("omnitron.gate.config", format!("{path}/.omnitron/gate/config.yaml"));
 
       init!("omnitron.log", format!("{}/omnitron.log", global!("omnitron.base")));
@@ -61,4 +61,3 @@ pub fn init() {
     None => crashln!("{} Impossible to get your home directory", *helpers::FAIL),
   }
 }
-

@@ -117,11 +117,7 @@ pub(crate) async fn health(format: &String) {
     process_count: runner.count(),
     pid_file: format!("{}  ", global!("omnitron.pid")),
     version: version,
-    status: ColoredString(ternary!(
-      pid_exists,
-      "online".green().bold(),
-      "stopped".red().bold()
-    )),
+    status: ColoredString(ternary!(pid_exists, "online".green().bold(), "stopped".red().bold())),
   }];
 
   let table = Table::new(data.clone())

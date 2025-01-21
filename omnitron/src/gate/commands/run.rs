@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use anyhow::Result;
 use futures::StreamExt;
 use omnitron_core::db::cleanup_db;
@@ -16,10 +14,7 @@ use tracing::*;
 
 use crate::gate::config::{load_config, watch_config};
 
-pub(crate) async fn command(cli: &crate::Cli, enable_admin_token: bool) -> Result<()> {
-  let version = env!("CARGO_PKG_VERSION");
-  info!(%version, "Omnitron");
-
+pub(crate) async fn command(enable_admin_token: bool) -> Result<()> {
   let admin_token = enable_admin_token.then(|| {
     std::env::var("OMNITRON_ADMIN_TOKEN").unwrap_or_else(|_| {
       error!("`OMNITRON_ADMIN_TOKEN` env variable must set when using --enable-admin-token");

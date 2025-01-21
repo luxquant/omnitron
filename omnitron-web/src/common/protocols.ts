@@ -62,7 +62,7 @@ export function makeTargetURL (opt: ConnectionOptions): string {
 
 export const possibleCredentials: Record<string, Set<CredentialKind>> = {
     ssh: new Set([CredentialKind.Password, CredentialKind.PublicKey, CredentialKind.Totp, CredentialKind.WebUserApproval]),
-    http: new Set([CredentialKind.Password, CredentialKind.Totp, CredentialKind.Sso]),
+    http: new Set([CredentialKind.Password, CredentialKind.Totp]),
     mysql: new Set([CredentialKind.Password]),
     postgres: new Set([CredentialKind.Password]),
 }

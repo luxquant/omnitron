@@ -11,7 +11,6 @@
     import Fa from 'svelte-fa'
     import { Button } from '@sveltestrap/sveltestrap'
     import CreatePasswordModal from './CreatePasswordModal.svelte'
-    import SsoCredentialModal from './SsoCredentialModal.svelte'
     import PublicKeyCredentialModal from './PublicKeyCredentialModal.svelte'
     import CreateOtpModal from './CreateOtpModal.svelte'
     import AuthPolicyEditor from './AuthPolicyEditor.svelte'

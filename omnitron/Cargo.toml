@@ -57,7 +57,7 @@ omnitron-pm = { version = "*", path = "../omnitron-pm" }
 omnitron-rpc = { version = "*", path = "../omnitron-rpc", features = ["full"]}
 
 [target.'cfg(target_os = "linux")'.dependencies]
-sd-notify = "0.4"
+sd-notify = "0.4.5"
 
 [features]
 default = ["sqlite"]

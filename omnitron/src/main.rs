@@ -45,7 +45,11 @@ enum Commands {
   },
   /// Start daemon
   #[command(visible_alias = "start")]
-  Up,
+  Up {
+    /// Enable an API token (passed via the `OMNITRON_ADMIN_TOKEN` env var) that automatically maps to the first admin user
+    #[clap(long, action=ArgAction::SetTrue)]
+    enable_admin_token: bool,
+  },
   // /// Reset process index
   // #[command(visible_alias = "reset_position")]
   // Reset,
@@ -75,12 +79,7 @@ enum Commands {
 pub(crate) enum GateCommands {
   /// Show Omnitron's SSH client keys
   ClientKeys,
-  /// Run Omnitron
-  Run {
-    /// Enable an API token (passed via the `OMNITRON_ADMIN_TOKEN` env var) that automatically maps to the first admin user
-    #[clap(long, action=ArgAction::SetTrue)]
-    enable_admin_token: bool,
-  },
+
   /// Perform basic config checks
   Check,
   /// Test the connection to a target host
@@ -274,7 +273,7 @@ async fn run(cli: &Cli) -> Result<()> {
   init_logging(load_config(false).ok().as_ref(), cli).await;
 
   match &cli.command {
-    Commands::Up => Ok(()), // This command is executed earlier in main, no handler needed here
+    Commands::Up { enable_admin_token } => Ok(()), // This command is executed earlier in main, no handler needed here
     Commands::Down => {
       daemon::commands::stop();
       Ok(())
@@ -284,7 +283,6 @@ async fn run(cli: &Cli) -> Result<()> {
       Ok(())
     }
     Commands::Gate { command } => match command {
-      GateCommands::Run { enable_admin_token } => gate::commands::run::command(cli, *enable_admin_token).await,
       GateCommands::Check => gate::commands::check::command(cli).await,
       GateCommands::TestTarget { target_name } => gate::commands::test_target::command(cli, target_name).await,
       GateCommands::ClientKeys => gate::commands::client_keys::command(cli).await,
@@ -399,9 +397,8 @@ fn main() {
   globals::init();
 
   let cli = Cli::parse();
-
-  if matches!(&cli.command, Commands::Up) {
-    daemon::commands::start(&cli).unwrap();
+  if let Commands::Up { enable_admin_token } = &cli.command {
+    daemon::commands::start(&cli, *enable_admin_token).unwrap();
   } else {
     tokio_main(&cli).unwrap();
   }

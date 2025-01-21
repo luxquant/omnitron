@@ -8,8 +8,8 @@ use config::{Config, Environment};
 use notify::{recommended_watcher, RecursiveMode, Watcher};
 use omnitron_common::helpers::fs::{secure_directory, secure_file};
 use omnitron_common::{
-  HttpConfig, MySqlConfig, OmnitronConfig, OmnitronConfigStore, OmnitronError, PostgresConfig, Secret,
-  SshConfig, UserPasswordCredential, UserRequireCredentialsPolicy,
+  HttpConfig, MySqlConfig, OmnitronConfig, OmnitronConfigStore, OmnitronError, PostgresConfig, Secret, SshConfig,
+  UserPasswordCredential, UserRequireCredentialsPolicy,
 };
 use omnitron_core::consts::{BUILTIN_ADMIN_ROLE_NAME, BUILTIN_ADMIN_USERNAME};
 use omnitron_core::Services;

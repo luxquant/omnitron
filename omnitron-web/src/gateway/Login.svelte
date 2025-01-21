@@ -4,9 +4,8 @@
     import { FormGroup } from '@sveltestrap/sveltestrap'
     import Fa from 'svelte-fa'
     import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-    import { faGoogle, faMicrosoft, faApple } from '@fortawesome/free-brands-svg-icons'
 
-    import { api, ApiAuthState, LoginFailureResponseFromJSON, type SsoProviderDescription, SsoProviderKind, ResponseError } from 'gateway/lib/api'
+    import { api, ApiAuthState, LoginFailureResponseFromJSON, ResponseError } from 'gateway/lib/api'
     import { reloadServerInfo } from 'gateway/lib/store'
     import AsyncButton from 'common/AsyncButton.svelte'
     import { stringifyError } from 'common/errors'

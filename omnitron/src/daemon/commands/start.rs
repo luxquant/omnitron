@@ -4,7 +4,7 @@ use global_placeholders::global;
 
 use crate::daemon::daemonizer::{Daemonizr, DaemonizrError, Stderr, Stdout};
 
-pub fn start(cli: &crate::Cli) -> anyhow::Result<()> {
+pub fn start(cli: &crate::Cli, enable_admin_token: bool) -> anyhow::Result<()> {
   match Daemonizr::new()
     .work_dir(PathBuf::from(global!("omnitron.base")))
     .expect("invalid omnitron base path")
@@ -39,7 +39,7 @@ pub fn start(cli: &crate::Cli) -> anyhow::Result<()> {
     .build()
     .unwrap()
     .block_on(async {
-      crate::daemon::daemon_main(cli).await;
+      crate::daemon::daemon_main(cli, enable_admin_token).await;
     });
 
   Ok(())

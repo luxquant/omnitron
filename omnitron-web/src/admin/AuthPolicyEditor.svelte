@@ -21,7 +21,6 @@ const labels = {
     Password: 'Password',
     PublicKey: 'Key',
     Totp: 'OTP',
-    Sso: 'SSO',
     WebUserApproval: 'In-browser auth',
 }
 
