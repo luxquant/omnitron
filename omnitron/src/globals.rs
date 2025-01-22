@@ -49,7 +49,6 @@ pub fn init() {
       //   log::info!("created omnitron log dir");
       // }
 
-      // init!("omnitron.daemon.kind", config.daemon.kind);
       // init!("omnitron.daemon.log", format!("{path}/.omnitron/daemon.log"));
 
       // let out = format!("{}/{{}}-out.log", config.runner.log_path);

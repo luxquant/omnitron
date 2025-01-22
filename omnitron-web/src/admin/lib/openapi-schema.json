@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Omnitron Web Admin",
-    "version": "0.1.0"
+    "title": "Omnitron Admin",
+    "version": "0.1.2"
   },
   "servers": [
     {
@@ -63,7 +63,7 @@
             "content": {
               "application/json; charset=utf-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedSessionSnapshot"
+                  "$ref": "#/components/schemas/PaginatedResponse_SessionSnapshot"
                 }
               }
             }
@@ -2084,7 +2084,7 @@
           }
         }
       },
-      "PaginatedSessionSnapshot": {
+      "PaginatedResponse_SessionSnapshot": {
         "type": "object",
         "required": [
           "items",

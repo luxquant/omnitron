@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use omnitron_common::OmnitronConfig;
-use omnitron_core::logging::{make_database_logger_layer, make_socket_logger_layer};
+use gate_common::OmnitronConfig;
+use gate_core::logging::{make_database_logger_layer, make_socket_logger_layer};
 use time::{format_description, UtcOffset};
 use tracing_subscriber::filter::dynamic_filter_fn;
 use tracing_subscriber::fmt::time::OffsetTime;

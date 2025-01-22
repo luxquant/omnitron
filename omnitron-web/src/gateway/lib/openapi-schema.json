@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Omnitron HTTP proxy",
-    "version": "0.1.0"
+    "title": "Omnitron User",
+    "version": "0.1.2"
   },
   "servers": [
     {

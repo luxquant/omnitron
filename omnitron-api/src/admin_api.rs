@@ -1,0 +1,39 @@
+use gate_core::Services;
+use poem::{EndpointExt, IntoEndpoint, Route};
+use poem_openapi::OpenApiService;
+
+pub fn admin_api_app(services: &Services) -> impl IntoEndpoint {
+  let api_service =
+    OpenApiService::new(crate::api::admin::get(), "Omnitron admin API", env!("CARGO_PKG_VERSION")).server("/@omnitron/admin/api");
+
+  let ui = api_service.swagger_ui();
+  let spec = api_service.spec_endpoint();
+  let db = services.db.clone();
+  let config = services.config.clone();
+  let config_provider = services.config_provider.clone();
+  let recordings = services.recordings.clone();
+  let state = services.state.clone();
+
+  Route::new()
+    .nest("", api_service)
+    .nest("/swagger", ui)
+    .nest("/openapi.json", spec)
+    .at("/recordings/:id/cast", crate::api::admin::recordings_detail::api_get_recording_cast)
+    .at(
+      "/recordings/:id/stream",
+      crate::api::admin::recordings_detail::api_get_recording_stream,
+    )
+    .at(
+      "/recordings/:id/tcpdump",
+      crate::api::admin::recordings_detail::api_get_recording_tcpdump,
+    )
+    .at(
+      "/sessions/changes",
+      crate::api::admin::sessions_list::api_get_sessions_changes_stream,
+    )
+    .data(db)
+    .data(config_provider)
+    .data(state)
+    .data(recordings)
+    .data(config)
+}

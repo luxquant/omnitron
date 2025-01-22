@@ -39,7 +39,7 @@ pub fn start(cli: &crate::Cli, enable_admin_token: bool) -> anyhow::Result<()> {
     .build()
     .unwrap()
     .block_on(async {
-      crate::daemon::daemon_main(cli, enable_admin_token).await;
+      crate::daemon::daemon_main(cli, enable_admin_token).await.unwrap();
     });
 
   Ok(())

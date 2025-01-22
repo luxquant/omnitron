@@ -1,12 +1,12 @@
 use anyhow::Result;
 use futures::StreamExt;
-use omnitron_core::db::cleanup_db;
-use omnitron_core::logging::install_database_logger;
-use omnitron_core::{ProtocolServer, Services};
-use omnitron_protocol_http::HTTPProtocolServer;
-use omnitron_protocol_mysql::MySQLProtocolServer;
-use omnitron_protocol_postgres::PostgresProtocolServer;
-use omnitron_protocol_ssh::SSHProtocolServer;
+use gate_core::db::cleanup_db;
+use gate_core::logging::install_database_logger;
+use gate_core::{ProtocolServer, Services};
+use gate_protocol_http::HTTPProtocolServer;
+use gate_protocol_mysql::MySQLProtocolServer;
+use gate_protocol_postgres::PostgresProtocolServer;
+use gate_protocol_ssh::SSHProtocolServer;
 #[cfg(target_os = "linux")]
 use sd_notify::NotifyState;
 use tokio::signal::unix::SignalKind;

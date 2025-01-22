@@ -1,6 +1,6 @@
 use anyhow::Result;
-use omnitron_common::TargetOptions;
-use omnitron_core::{ProtocolServer, Services, TargetTestError};
+use gate_common::TargetOptions;
+use gate_core::{ProtocolServer, Services, TargetTestError};
 use tracing::*;
 
 use crate::gate::config::load_config;
@@ -24,10 +24,10 @@ pub(crate) async fn command(cli: &crate::Cli, target_name: &String) -> Result<()
   };
 
   let s: Box<dyn ProtocolServer> = match target.options {
-    TargetOptions::Ssh(_) => Box::new(omnitron_protocol_ssh::SSHProtocolServer::new(&services).await?),
-    TargetOptions::Http(_) => Box::new(omnitron_protocol_http::HTTPProtocolServer::new(&services).await?),
-    TargetOptions::MySql(_) => Box::new(omnitron_protocol_mysql::MySQLProtocolServer::new(&services).await?),
-    TargetOptions::Postgres(_) => Box::new(omnitron_protocol_postgres::PostgresProtocolServer::new(&services).await?),
+    TargetOptions::Ssh(_) => Box::new(gate_protocol_ssh::SSHProtocolServer::new(&services).await?),
+    TargetOptions::Http(_) => Box::new(gate_protocol_http::HTTPProtocolServer::new(&services).await?),
+    TargetOptions::MySql(_) => Box::new(gate_protocol_mysql::MySQLProtocolServer::new(&services).await?),
+    TargetOptions::Postgres(_) => Box::new(gate_protocol_postgres::PostgresProtocolServer::new(&services).await?),
     TargetOptions::WebAdmin(_) => {
       error!("Unsupported target type");
       return Ok(());

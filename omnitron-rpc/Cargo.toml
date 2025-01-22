@@ -42,10 +42,7 @@ thiserror = "2.0"
 tokio = { version = "1.20", features = ["time"] }
 tokio-util = { version = "0.7.13", features = ["time"] }
 tokio-serde = { optional = true, version = "0.9" }
-tracing = { version = "0.1", default-features = false, features = [
-    "attributes",
-    "log",
-] }
+tracing.workspace = true
 tracing-opentelemetry = { version = "0.28.0", default-features = false }
 opentelemetry = { version = "0.27.1", default-features = false }
 opentelemetry-semantic-conventions = "0.16.0"
@@ -61,9 +58,9 @@ opentelemetry-otlp = "0.27.0"
 opentelemetry_sdk = { version = "0.27.1", features = ["rt-tokio"] }
 pin-utils = "0.1.0"
 serde_bytes = "0.11"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 tokio = { version = "1.20", features = ["full", "test-util", "tracing"] }
-console-subscriber = "0.4"
+console-subscriber = "0.4.1"
 tokio-serde = { version = "0.9", features = ["json", "bincode"] }
 trybuild = "1.0"
 tokio-rustls = "0.26"

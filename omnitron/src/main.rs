@@ -77,9 +77,14 @@ enum Commands {
 
 #[derive(clap::Subcommand)]
 pub(crate) enum GateCommands {
+  /// Run Warpgate
+  Run {
+    /// Enable an API token (passed via the `WARPGATE_ADMIN_TOKEN` env var) that automatically maps to the first admin user
+    #[clap(long, action=ArgAction::SetTrue)]
+    enable_admin_token: bool,
+  },
   /// Show Omnitron's SSH client keys
   ClientKeys,
-
   /// Perform basic config checks
   Check,
   /// Test the connection to a target host
@@ -273,16 +278,16 @@ async fn run(cli: &Cli) -> Result<()> {
   init_logging(load_config(false).ok().as_ref(), cli).await;
 
   match &cli.command {
-    Commands::Up { enable_admin_token } => Ok(()), // This command is executed earlier in main, no handler needed here
     Commands::Down => {
       daemon::commands::stop();
       Ok(())
     }
     Commands::Info { format } => {
-      daemon::commands::health(format).await;
+      daemon::commands::info(format).await;
       Ok(())
     }
     Commands::Gate { command } => match command {
+      GateCommands::Run { enable_admin_token } => gate::commands::run::command(*enable_admin_token).await,
       GateCommands::Check => gate::commands::check::command(cli).await,
       GateCommands::TestTarget { target_name } => gate::commands::test_target::command(cli, target_name).await,
       GateCommands::ClientKeys => gate::commands::client_keys::command(cli).await,
@@ -390,6 +395,7 @@ async fn run(cli: &Cli) -> Result<()> {
         }
       },
     },
+    _ => Ok(()),
   }
 }
 

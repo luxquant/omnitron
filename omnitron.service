@@ -1,5 +1,3 @@
-# example systemd file. edit as needed
-
 [Unit]
 Description=OMNITRON Daemon
 After=network.target
@@ -18,8 +16,8 @@ StartLimitInterval=180
 StartLimitBurst=30
 RestartSec=5s
 
-ExecStart=/root/.cargo/bin/omnitron daemon start -vvv
-ExecStop=/root/.cargo/bin/omnitron daemon stop -vvv
+ExecStart=/root/.cargo/bin/omnitron up
+ExecStop=/root/.cargo/bin/omnitron down
 
 [Install]
 WantedBy=multi-user.target
