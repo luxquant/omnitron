@@ -73,7 +73,6 @@ pub(crate) async fn command(enable_admin_token: bool) -> Result<()> {
         #[allow(clippy::explicit_auto_deref)]
         match cleanup_db(
           &mut *services.db.lock().await,
-          &mut *services.recordings.lock().await,
           &retention,
         )
         .await

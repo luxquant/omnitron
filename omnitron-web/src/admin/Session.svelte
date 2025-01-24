@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { api, type SessionSnapshot, type Recording, type TargetSSHOptions, type TargetHTTPOptions, type TargetMySqlOptions, type TargetPostgresOptions } from 'admin/lib/api'
+    import { api, type SessionSnapshot, type TargetSSHOptions, type TargetHTTPOptions, type TargetMySqlOptions, type TargetPostgresOptions } from 'admin/lib/api'
     import { timeAgo } from 'admin/lib/time'
     import AsyncButton from 'common/AsyncButton.svelte'
     import DelayedSpinner from 'common/DelayedSpinner.svelte'
@@ -24,11 +24,9 @@
 
     let error: string|null = $state(null)
     let session: SessionSnapshot|null = $state(null)
-    let recordings: Recording[]|null = $state(null)
 
     async function load () {
         session = await api.getSession(params)
-        recordings = await api.getSessionRecordings(params)
     }
 
     async function close () {
@@ -117,47 +115,9 @@
         {/if}
     </div>
 
-    {#if recordings?.length }
-        <h3 class="mt-4">Recordings</h3>
-        <div class="list-group list-group-flush">
-            {#each recordings as recording}
-                <a
-                    class="list-group-item list-group-item-action"
-                    href="/recordings/{recording.id}"
-                    use:link>
-                    <div class="main">
-                        <strong>
-                            {recording.name}
-                        </strong>
-                        <small class="meta ms-auto">
-                            {timeAgo(recording.started)}
-                        </small>
-                    </div>
-                </a>
-            {/each}
-        </div>
-    {/if}
-
     <h3 class="mt-4">Log</h3>
     <LogViewer filters={{
         sessionId: session.id,
     }} />
 
 {/if}
-
-<style lang="scss">
-.list-group-item {
-    .main {
-        display: flex;
-        align-items: center;
-
-        > * {
-            margin-right: 20px;
-        }
-    }
-
-    .meta {
-        opacity: .75;
-    }
-}
-</style>

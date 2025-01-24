@@ -9,7 +9,6 @@ mod pagination;
 mod parameters;
 mod password_credentials;
 mod public_key_credentials;
-pub mod recordings_detail;
 mod roles;
 mod sessions_detail;
 pub mod sessions_list;
@@ -39,7 +38,6 @@ pub enum AnySecurityScheme {
 pub fn get() -> impl OpenApi {
   (
     (sessions_list::Api, sessions_detail::Api),
-    recordings_detail::Api,
     (roles::ListApi, roles::DetailApi),
     (tickets_list::Api, tickets_detail::Api),
     (known_hosts_list::Api, known_hosts_detail::Api),

@@ -323,24 +323,6 @@ impl PostgresConfig {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct RecordingsConfig {
-  #[serde(default = "_default_false")]
-  pub enable: bool,
-
-  #[serde(default = "_default_recordings_path")]
-  pub path: String,
-}
-
-impl Default for RecordingsConfig {
-  fn default() -> Self {
-    Self {
-      enable: false,
-      path: _default_recordings_path(),
-    }
-  }
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct LogConfig {
   #[serde(default = "_default_retention", with = "humantime_serde")]
   pub retention: Duration,
@@ -360,9 +342,6 @@ impl Default for LogConfig {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct OmnitronConfigStore {
-  #[serde(default)]
-  pub recordings: RecordingsConfig,
-
   #[serde(default)]
   pub external_host: Option<String>,
 
@@ -388,7 +367,6 @@ pub struct OmnitronConfigStore {
 impl Default for OmnitronConfigStore {
   fn default() -> Self {
     Self {
-      recordings: <_>::default(),
       external_host: None,
       database_url: _default_database_url(),
       ssh: <_>::default(),

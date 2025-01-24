@@ -7,7 +7,6 @@ use sea_orm::DatabaseConnection;
 use tokio::sync::Mutex;
 
 use crate::db::{connect_to_db, populate_db};
-use crate::recordings::SessionRecordings;
 use crate::{AuthStateStore, ConfigProvider, DatabaseConfigProvider, State};
 
 type ConfigProviderArc = Arc<Mutex<dyn ConfigProvider + Send + 'static>>;
@@ -15,7 +14,6 @@ type ConfigProviderArc = Arc<Mutex<dyn ConfigProvider + Send + 'static>>;
 #[derive(Clone)]
 pub struct Services {
   pub db: Arc<Mutex<DatabaseConnection>>,
-  pub recordings: Arc<Mutex<SessionRecordings>>,
   pub config: Arc<Mutex<OmnitronConfig>>,
   pub state: Arc<Mutex<State>>,
   pub config_provider: ConfigProviderArc,
@@ -28,9 +26,6 @@ impl Services {
     let mut db = connect_to_db(&config).await?;
     populate_db(&mut db, &mut config).await?;
     let db = Arc::new(Mutex::new(db));
-
-    let recordings = SessionRecordings::new(db.clone(), &config)?;
-    let recordings = Arc::new(Mutex::new(recordings));
 
     let config = Arc::new(Mutex::new(config));
 
@@ -50,7 +45,6 @@ impl Services {
 
     Ok(Self {
       db: db.clone(),
-      recordings,
       config: config.clone(),
       state: State::new(&db),
       config_provider,

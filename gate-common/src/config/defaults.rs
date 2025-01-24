@@ -30,11 +30,6 @@ pub(crate) fn _default_empty_string() -> String {
 }
 
 #[inline]
-pub(crate) fn _default_recordings_path() -> String {
-  "./data/recordings".to_owned()
-}
-
-#[inline]
 pub(crate) fn _default_database_url() -> Secret<String> {
   Secret::new("sqlite:data/db".to_owned())
 }

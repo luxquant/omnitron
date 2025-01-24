@@ -22,9 +22,6 @@
         '/sessions/:id': wrap({
             asyncComponent: () => import('./Session.svelte') as any,
         }),
-        '/recordings/:id': wrap({
-            asyncComponent: () => import('./Recording.svelte') as any,
-        }),
         '/targets/create': wrap({
             asyncComponent: () => import('./CreateTarget.svelte') as any,
         }),

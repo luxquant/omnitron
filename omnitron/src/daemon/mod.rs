@@ -108,7 +108,6 @@ pub(crate) async fn daemon_main(cli: &crate::Cli, enable_admin_token: bool) -> R
         #[allow(clippy::explicit_auto_deref)]
         match cleanup_db(
           &mut *services.db.lock().await,
-          &mut *services.recordings.lock().await,
           &retention,
         )
         .await

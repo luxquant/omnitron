@@ -9,7 +9,6 @@ pub use config_providers::*;
 pub mod db;
 mod protocols;
 pub use protocols::*;
-pub mod recordings;
 mod services;
 pub use services::*;
 mod auth_state_store;

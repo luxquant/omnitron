@@ -137,47 +137,6 @@
         "operationId": "get_session"
       }
     },
-    "/sessions/{id}/recordings": {
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "in": "path",
-            "required": true,
-            "deprecated": false,
-            "explode": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json; charset=utf-8": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Recording"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "TokenSecurityScheme": []
-          },
-          {
-            "CookieSecurityScheme": []
-          }
-        ],
-        "operationId": "get_session_recordings"
-      }
-    },
     "/sessions/{id}/close": {
       "post": {
         "parameters": [
@@ -210,47 +169,6 @@
           }
         ],
         "operationId": "close_session"
-      }
-    },
-    "/recordings/{id}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "in": "path",
-            "required": true,
-            "deprecated": false,
-            "explode": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json; charset=utf-8": {
-                "schema": {
-                  "$ref": "#/components/schemas/Recording"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "TokenSecurityScheme": []
-          },
-          {
-            "CookieSecurityScheme": []
-          }
-        ],
-        "operationId": "get_recording"
       }
     },
     "/roles": {
@@ -2126,47 +2044,6 @@
             "type": "boolean"
           }
         }
-      },
-      "Recording": {
-        "type": "object",
-        "required": [
-          "id",
-          "name",
-          "started",
-          "session_id",
-          "kind"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "started": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "ended": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "session_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "kind": {
-            "$ref": "#/components/schemas/RecordingKind"
-          }
-        }
-      },
-      "RecordingKind": {
-        "type": "string",
-        "enum": [
-          "Terminal",
-          "Traffic"
-        ]
       },
       "Role": {
         "type": "object",

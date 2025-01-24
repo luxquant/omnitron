@@ -73,9 +73,6 @@ pub(crate) async fn create_config() -> Result<()> {
   store.postgres.certificate = store.http.certificate.clone();
   store.postgres.key = store.http.key.clone();
 
-  store.recordings.enable = true;
-  store.recordings.path = data_path.join("recordings").to_string_lossy().to_string();
-
   // ---
 
   let admin_password = Secret::new(if let Ok(admin_password) = std::env::var("OMNITRON_ADMIN_PASSWORD") {

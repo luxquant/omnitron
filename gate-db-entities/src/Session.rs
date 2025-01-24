@@ -18,17 +18,12 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-  Recordings,
   Ticket,
 }
 
 impl RelationTrait for Relation {
   fn def(&self) -> RelationDef {
     match self {
-      Self::Recordings => Entity::has_many(super::Recording::Entity)
-        .from(Column::Id)
-        .to(super::Recording::Column::SessionId)
-        .into(),
       Self::Ticket => Entity::belongs_to(super::Ticket::Entity)
         .from(Column::TicketId)
         .to(super::Ticket::Column::Id)

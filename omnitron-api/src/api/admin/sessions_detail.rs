@@ -2,12 +2,12 @@ use std::sync::Arc;
 
 use gate_common::OmnitronError;
 use gate_core::{SessionSnapshot, State};
-use gate_db_entities::{Recording, Session};
+use gate_db_entities::Session;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, OpenApi};
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder};
+use sea_orm::{DatabaseConnection, EntityTrait};
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
@@ -22,12 +22,6 @@ enum GetSessionResponse {
   Ok(Json<SessionSnapshot>),
   #[oai(status = 404)]
   NotFound,
-}
-
-#[derive(ApiResponse)]
-enum GetSessionRecordingsResponse {
-  #[oai(status = 200)]
-  Ok(Json<Vec<Recording::Model>>),
 }
 
 #[derive(ApiResponse)]
@@ -55,22 +49,6 @@ impl Api {
       Some(session) => Ok(GetSessionResponse::Ok(Json(session.into()))),
       None => Ok(GetSessionResponse::NotFound),
     }
-  }
-
-  #[oai(path = "/sessions/:id/recordings", method = "get", operation_id = "get_session_recordings")]
-  async fn api_get_session_recordings(
-    &self,
-    db: Data<&Arc<Mutex<DatabaseConnection>>>,
-    id: Path<Uuid>,
-    _auth: AnySecurityScheme,
-  ) -> Result<GetSessionRecordingsResponse, OmnitronError> {
-    let db = db.lock().await;
-    let recordings: Vec<Recording::Model> = Recording::Entity::find()
-      .order_by_desc(Recording::Column::Started)
-      .filter(Recording::Column::SessionId.eq(id.0))
-      .all(&*db)
-      .await?;
-    Ok(GetSessionRecordingsResponse::Ok(Json(recordings)))
   }
 
   #[oai(path = "/sessions/:id/close", method = "post", operation_id = "close_session")]

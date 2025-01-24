@@ -1,9 +1,7 @@
 use std::borrow::Cow;
-use std::collections::hash_map::Entry::Vacant;
 use std::collections::{HashMap, HashSet};
-use std::net::{Ipv4Addr, SocketAddr};
+use std::net::SocketAddr;
 use std::pin::Pin;
-use std::str::FromStr;
 use std::sync::Arc;
 use std::task::Poll;
 
@@ -15,9 +13,6 @@ use futures::{Future, FutureExt};
 use gate_common::auth::{AuthCredential, AuthResult, AuthSelector, AuthState, CredentialKind};
 use gate_common::eventhub::{EventHub, EventSender, EventSubscription};
 use gate_common::{OmnitronError, Secret, SessionId, SshHostKeyVerificationMode, Target, TargetOptions, TargetSSHOptions};
-use gate_core::recordings::{
-  self, ConnectionRecorder, TerminalRecorder, TerminalRecordingStreamId, TrafficConnectionParams, TrafficRecorder,
-};
 use gate_core::{authorize_ticket, consume_ticket, OmnitronServerHandle, Services};
 use russh::keys::{PublicKey, PublicKeyBase64};
 use russh::{CryptoVec, MethodKind, MethodSet, Sig};
@@ -71,7 +66,6 @@ pub struct ServerSession {
   session_handle: Option<russh::server::Handle>,
   pty_channels: Vec<Uuid>,
   all_channels: Vec<Uuid>,
-  channel_recorders: HashMap<Uuid, TerminalRecorder>,
   channel_map: BiMap<ServerChannelId, Uuid>,
   channel_pty_size_map: HashMap<Uuid, PtyRequest>,
   rc_tx: UnboundedSender<(RCCommand, Option<RCCommandReply>)>,
@@ -81,8 +75,6 @@ pub struct ServerSession {
   services: Services,
   server_handle: Arc<Mutex<OmnitronServerHandle>>,
   target: TargetSelection,
-  traffic_recorders: HashMap<(String, u32), TrafficRecorder>,
-  traffic_connection_recorders: HashMap<Uuid, ConnectionRecorder>,
   hub: EventHub<Event>,
   event_sender: EventSender<Event>,
   main_event_subscription: EventSubscription<Event>,
@@ -127,7 +119,6 @@ impl ServerSession {
       session_handle: None,
       pty_channels: vec![],
       all_channels: vec![],
-      channel_recorders: HashMap::new(),
       channel_map: BiMap::new(),
       channel_pty_size_map: HashMap::new(),
       rc_tx: rc_handles.command_tx.clone(),
@@ -137,8 +128,6 @@ impl ServerSession {
       services: services.clone(),
       server_handle,
       target: TargetSelection::None,
-      traffic_recorders: HashMap::new(),
-      traffic_connection_recorders: HashMap::new(),
       hub,
       event_sender: event_sender.clone(),
       main_event_subscription,
@@ -407,12 +396,6 @@ impl ServerSession {
       ServerHandlerEvent::PtyRequest(server_channel_id, request, reply) => {
         let channel_id = self.map_channel(&server_channel_id)?;
         self.channel_pty_size_map.insert(channel_id, request.clone());
-        if let Some(recorder) = self.channel_recorders.get_mut(&channel_id) {
-          if let Err(error) = recorder.write_pty_resize(request.col_width, request.row_height).await {
-            error!(%channel_id, ?error, "Failed to record terminal data");
-            self.channel_recorders.remove(&channel_id);
-          }
-        }
         self
           .send_command_and_wait(RCCommand::Channel(channel_id, ChannelOperation::RequestPty(request)))
           .await?;
@@ -431,10 +414,6 @@ impl ServerSession {
         let _ = self.maybe_connect_remote().await;
 
         let _ = self.send_command(RCCommand::Channel(channel_id, ChannelOperation::RequestShell));
-
-        self
-          .start_terminal_recording(channel_id, format!("shell-channel-{}", server_channel_id.0))
-          .await;
 
         info!(%channel_id, "Opening shell");
 
@@ -603,20 +582,6 @@ impl ServerSession {
         self.disconnect_server().await;
       }
       RCEvent::Output(channel, data) => {
-        if let Some(recorder) = self.channel_recorders.get_mut(&channel) {
-          if let Err(error) = recorder.write(TerminalRecordingStreamId::Output, &data).await {
-            error!(%channel, ?error, "Failed to record terminal data");
-            self.channel_recorders.remove(&channel);
-          }
-        }
-
-        if let Some(recorder) = self.traffic_connection_recorders.get_mut(&channel) {
-          if let Err(error) = recorder.write_rx(&data).await {
-            error!(%channel, ?error, "Failed to record traffic data");
-            self.traffic_connection_recorders.remove(&channel);
-          }
-        }
-
         let server_channel_id = self.map_channel_reverse(&channel)?;
         if let Some(session) = self.session_handle.as_mut() {
           let _ = session.data(server_channel_id.0, CryptoVec::from_slice(&data)).await;
@@ -687,12 +652,6 @@ impl ServerSession {
       }
       RCEvent::Done => {}
       RCEvent::ExtendedData { channel, data, ext } => {
-        if let Some(recorder) = self.channel_recorders.get_mut(&channel) {
-          if let Err(error) = recorder.write(TerminalRecordingStreamId::Error, &data).await {
-            error!(%channel, ?error, "Failed to record session data");
-            self.channel_recorders.remove(&channel);
-          }
-        }
         let server_channel_id = self.map_channel_reverse(&channel)?;
         self
           .maybe_with_session(|handle| async move {
@@ -726,23 +685,6 @@ impl ServerSession {
 
           self.channel_map.insert(ServerChannelId(server_channel.id()), id);
           self.all_channels.push(id);
-
-          let recorder = self
-            .traffic_recorder_for(&params.originator_address, params.originator_port, "forwarded-tcpip")
-            .await;
-          if let Some(recorder) = recorder {
-            #[allow(clippy::unwrap_used)]
-            let mut recorder = recorder.connection(TrafficConnectionParams {
-              dst_addr: Ipv4Addr::from_str("2.2.2.2").unwrap(),
-              dst_port: params.connected_port as u16,
-              src_addr: Ipv4Addr::from_str("1.1.1.1").unwrap(),
-              src_port: params.originator_port as u16,
-            });
-            if let Err(error) = recorder.write_connection_setup().await {
-              error!(channel=%id, ?error, "Failed to record connection setup");
-            }
-            self.traffic_connection_recorders.insert(id, recorder);
-          }
         }
       }
       RCEvent::X11(id, originator_address, originator_port) => {
@@ -836,24 +778,6 @@ impl ServerSession {
     {
       Ok(()) => {
         self.all_channels.push(uuid);
-
-        let recorder = self
-          .traffic_recorder_for(&params.host_to_connect, params.port_to_connect, "direct-tcpip")
-          .await;
-        if let Some(recorder) = recorder {
-          #[allow(clippy::unwrap_used)]
-          let mut recorder = recorder.connection(TrafficConnectionParams {
-            dst_addr: Ipv4Addr::from_str("2.2.2.2").unwrap(),
-            dst_port: params.port_to_connect as u16,
-            src_addr: Ipv4Addr::from_str("1.1.1.1").unwrap(),
-            src_port: params.originator_port as u16,
-          });
-          if let Err(error) = recorder.write_connection_setup().await {
-            error!(%channel, ?error, "Failed to record connection setup");
-          }
-          self.traffic_connection_recorders.insert(uuid, recorder);
-        }
-
         Ok(true)
       }
       Err(SshClientError::Russh(russh::Error::ChannelOpenFailure(_))) => Ok(false),
@@ -864,12 +788,6 @@ impl ServerSession {
   async fn _window_change_request(&mut self, server_channel_id: ServerChannelId, request: PtyRequest) -> Result<()> {
     let channel_id = self.map_channel(&server_channel_id)?;
     self.channel_pty_size_map.insert(channel_id, request.clone());
-    if let Some(recorder) = self.channel_recorders.get_mut(&channel_id) {
-      if let Err(error) = recorder.write_pty_resize(request.col_width, request.row_height).await {
-        error!(%channel_id, ?error, "Failed to record terminal data");
-        self.channel_recorders.remove(&channel_id);
-      }
-    }
     self
       .send_command_and_wait(RCCommand::Channel(channel_id, ChannelOperation::ResizePty(request)))
       .await?;
@@ -892,37 +810,7 @@ impl ServerSession {
         ));
       }
     }
-
-    self
-      .start_terminal_recording(channel_id, format!("exec-channel-{}", server_channel_id.0))
-      .await;
     Ok(())
-  }
-
-  async fn start_terminal_recording(&mut self, channel_id: Uuid, name: String) {
-    let recorder = async {
-      let mut recorder = self
-        .services
-        .recordings
-        .lock()
-        .await
-        .start::<TerminalRecorder>(&self.id, name)
-        .await?;
-      if let Some(request) = self.channel_pty_size_map.get(&channel_id) {
-        recorder.write_pty_resize(request.col_width, request.row_height).await?;
-      }
-      Ok::<_, recordings::Error>(recorder)
-    }
-    .await;
-    match recorder {
-      Ok(recorder) => {
-        self.channel_recorders.insert(channel_id, recorder);
-      }
-      Err(error) => match error {
-        recordings::Error::Disabled => (),
-        error => error!(channel=%channel_id, ?error, "Failed to start recording"),
-      },
-    }
   }
 
   async fn _channel_x11_request(&mut self, server_channel_id: ServerChannelId, request: X11Request) -> Result<()> {
@@ -942,28 +830,6 @@ impl ServerSession {
       .send_command_and_wait(RCCommand::Channel(channel_id, ChannelOperation::RequestEnv(name, value)))
       .await?;
     Ok(())
-  }
-
-  async fn traffic_recorder_for(&mut self, host: &str, port: u32, tag: &str) -> Option<&mut TrafficRecorder> {
-    let host = host.to_owned();
-    if let Vacant(e) = self.traffic_recorders.entry((host.clone(), port)) {
-      match self
-        .services
-        .recordings
-        .lock()
-        .await
-        .start(&self.id, format!("{tag}-{host}-{port}"))
-        .await
-      {
-        Ok(recorder) => {
-          e.insert(recorder);
-        }
-        Err(error) => {
-          error!(%host, %port, ?error, "Failed to start recording");
-        }
-      }
-    }
-    self.traffic_recorders.get_mut(&(host, port))
   }
 
   pub async fn _channel_subsystem_request(
@@ -987,20 +853,6 @@ impl ServerSession {
       info!(channel=%channel_id, "User requested connection abort (Ctrl-C)");
       self.request_disconnect().await;
       return Ok(());
-    }
-
-    if let Some(recorder) = self.channel_recorders.get_mut(&channel_id) {
-      if let Err(error) = recorder.write(TerminalRecordingStreamId::Input, &data).await {
-        error!(channel=%channel_id, ?error, "Failed to record terminal data");
-        self.channel_recorders.remove(&channel_id);
-      }
-    }
-
-    if let Some(recorder) = self.traffic_connection_recorders.get_mut(&channel_id) {
-      if let Err(error) = recorder.write_tx(&data).await {
-        error!(channel=%channel_id, ?error, "Failed to record traffic data");
-        self.traffic_connection_recorders.remove(&channel_id);
-      }
     }
 
     if self.pty_channels.contains(&channel_id) {

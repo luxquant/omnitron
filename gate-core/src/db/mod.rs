@@ -8,14 +8,12 @@ use gate_db_entities::{LogEntry, Role, Target, TargetRoleAssignment};
 use gate_db_migrations::migrate_database;
 use sea_orm::sea_query::Expr;
 use sea_orm::{
-  ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter,
+  ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter,
   TransactionTrait,
 };
-use tracing::*;
 use uuid::Uuid;
 
 use crate::consts::{BUILTIN_ADMIN_ROLE_NAME, BUILTIN_ADMIN_TARGET_NAME};
-use crate::recordings::SessionRecordings;
 
 pub async fn connect_to_db(config: &OmnitronConfig) -> Result<DatabaseConnection> {
   let mut url = url::Url::parse(&config.store.database_url.expose_secret()[..])?;
@@ -59,18 +57,8 @@ pub async fn connect_to_db(config: &OmnitronConfig) -> Result<DatabaseConnection
 }
 
 pub async fn populate_db(db: &mut DatabaseConnection, _config: &mut OmnitronConfig) -> Result<(), OmnitronError> {
-  use gate_db_entities::{Recording, Session};
+  use gate_db_entities::Session;
   use sea_orm::ActiveValue::Set;
-
-  Recording::Entity::update_many()
-    .set(Recording::ActiveModel {
-      ended: Set(Some(chrono::Utc::now())),
-      ..Default::default()
-    })
-    .filter(Expr::col(Recording::Column::Ended).is_null())
-    .exec(db)
-    .await
-    .map_err(OmnitronError::from)?;
 
   Session::Entity::update_many()
     .set(Session::ActiveModel {
@@ -135,27 +123,14 @@ pub async fn populate_db(db: &mut DatabaseConnection, _config: &mut OmnitronConf
   Ok(())
 }
 
-pub async fn cleanup_db(db: &mut DatabaseConnection, recordings: &mut SessionRecordings, retention: &Duration) -> Result<()> {
-  use gate_db_entities::{Recording, Session};
+pub async fn cleanup_db(db: &mut DatabaseConnection, retention: &Duration) -> Result<()> {
+  use gate_db_entities::Session;
   let cutoff = chrono::Utc::now() - chrono::Duration::from_std(*retention)?;
 
   LogEntry::Entity::delete_many()
     .filter(Expr::col(LogEntry::Column::Timestamp).lt(cutoff))
     .exec(db)
     .await?;
-
-  let recordings_to_delete = Recording::Entity::find()
-    .filter(Expr::col(Session::Column::Ended).is_not_null())
-    .filter(Expr::col(Session::Column::Ended).lt(cutoff))
-    .all(db)
-    .await?;
-
-  for recording in recordings_to_delete {
-    if let Err(error) = recordings.remove(&recording.session_id, &recording.name).await {
-      error!(session=%recording.session_id, name=%recording.name, %error, "Failed to remove recording");
-    }
-    recording.delete(db).await?;
-  }
 
   Session::Entity::delete_many()
     .filter(Expr::col(Session::Column::Ended).is_not_null())
