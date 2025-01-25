@@ -5,7 +5,7 @@ use async_trait::async_trait;
 pub use db::DatabaseConfigProvider;
 use omnitron_gate_common::auth::{AuthCredential, CredentialKind, CredentialPolicy};
 use omnitron_gate_common::{OmnitronError, Secret, Target, User};
-use omnitron_gate_db_entities::Ticket;
+use omnitron_db_entities::Ticket;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use tokio::sync::Mutex;

@@ -25,7 +25,7 @@ pub struct Cli {
 
 #[derive(clap::Subcommand)]
 enum Commands {
-  /// SSH/HTTP/MySQL/PostgreSQL/etc gate.
+  /// HTTP/SSH/PostgreSQL/MySQL gate.
   #[command(visible_alias = "gt")]
   Gate {
     #[command(subcommand)]
@@ -288,10 +288,10 @@ async fn run(cli: &Cli) -> Result<()> {
     }
     Commands::Gate { command } => match command {
       GateCommands::Run { enable_admin_token } => gate::commands::run::command(*enable_admin_token).await,
-      GateCommands::Check => gate::commands::check::command(cli).await,
-      GateCommands::TestTarget { target_name } => gate::commands::test_target::command(cli, target_name).await,
-      GateCommands::ClientKeys => gate::commands::client_keys::command(cli).await,
-      GateCommands::RecoverAccess { username } => gate::commands::recover_access::command(cli, username).await,
+      GateCommands::Check => gate::commands::check::command().await,
+      GateCommands::TestTarget { target_name } => gate::commands::test_target::command(target_name).await,
+      GateCommands::ClientKeys => gate::commands::client_keys::command().await,
+      GateCommands::RecoverAccess { username } => gate::commands::recover_access::command(username).await,
     },
     Commands::Pm { command } => match command {
       PmCommands::Import { path } => {

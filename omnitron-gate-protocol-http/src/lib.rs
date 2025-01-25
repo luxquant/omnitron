@@ -1,13 +1,9 @@
 #![feature(type_alias_impl_trait, try_blocks)]
-pub mod api;
 mod catchall;
-mod common;
 mod error;
 mod logging;
 mod middleware;
 mod proxy;
-mod session;
-mod session_handle;
 
 use std::fmt::Debug;
 use std::sync::Arc;
@@ -15,7 +11,7 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use async_trait::async_trait;
-use common::page_admin_auth;
+use omnitron_api::common::page_admin_auth;
 use omnitron_gate_common::{ListenEndpoint, Target, TargetOptions, TlsCertificateAndPrivateKey, TlsCertificateBundle, TlsPrivateKey};
 use omnitron_gate_core::{ProtocolServer, Services, TargetTestError};
 use http::HeaderValue;
@@ -32,10 +28,10 @@ use poem_openapi::OpenApiService;
 use tokio::sync::Mutex;
 use tracing::*;
 
-use crate::common::{endpoint_admin_auth, endpoint_auth, page_auth, SESSION_COOKIE_NAME};
+use omnitron_api::common::{endpoint_admin_auth, endpoint_auth, page_auth, SESSION_COOKIE_NAME};
 use crate::error::error_page;
 use crate::middleware::{CookieHostMiddleware, TicketMiddleware};
-use crate::session::{SessionStore, SharedSessionStorage};
+use omnitron_api::session::{SessionStore, SharedSessionStorage};
 
 pub struct HTTPProtocolServer {
   services: Services,
@@ -58,7 +54,7 @@ impl ProtocolServer for HTTPProtocolServer {
   async fn run(self, address: ListenEndpoint) -> Result<()> {
     let admin_api_app = admin_api_app(&self.services).into_endpoint();
     let api_service =
-      OpenApiService::new(crate::api::get(), "Omnitron user API", env!("CARGO_PKG_VERSION")).server("/@omnitron/api");
+      OpenApiService::new(omnitron_api::api::user::get(), "Omnitron user API", env!("CARGO_PKG_VERSION")).server("/@omnitron/api");
     let ui = api_service.swagger_ui();
     let spec = api_service.spec_endpoint();
 

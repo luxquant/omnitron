@@ -22,7 +22,7 @@ config = { version = "0.15.6", features = ["yaml"], default-features = false }
 console = { version = "0.15", default-features = false }
 console-subscriber = { version = "0.4.1", optional = true }
 data-encoding.workspace = true
-dialoguer = "0.10.0"
+dialoguer = "0.11.0"
 futures.workspace = true
 macros-rs = "1.4.1"
 notify = "5.1"
@@ -32,7 +32,7 @@ serde_json.workspace = true
 serde_yaml = "0.9"
 sea-orm = { version = "0.12.15", default-features = false }
 time = "0.3"
-tokio = { version = "1.20", features = ["tracing", "signal", "macros"] }
+tokio = { version = "1.43.0", features = ["tracing", "signal", "macros"] }
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = [
     "env-filter",
@@ -49,7 +49,7 @@ psutil = { version = "3.3.0", features = ["serde"] }
 omnitron-api = { version = "*", path = "../omnitron-api" }
 omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
 omnitron-gate-core = { version = "*", path = "../omnitron-gate-core" }
-omnitron-gate-db-entities = { version = "*", path = "../omnitron-gate-db-entities" }
+omnitron-db-entities = { version = "*", path = "../omnitron-db-entities" }
 omnitron-gate-protocol-http = { version = "*", path = "../omnitron-gate-protocol-http" }
 omnitron-gate-protocol-mysql = { version = "*", path = "../omnitron-gate-protocol-mysql" }
 omnitron-gate-protocol-postgres = { version = "*", path = "../omnitron-gate-protocol-postgres" }

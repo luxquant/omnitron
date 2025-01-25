@@ -11,7 +11,7 @@ publish.workspace = true
 anyhow = "1.0"
 async-trait = "0.1.85"
 chrono = { version = "0.4", default-features = false, features = ["serde"] }
-cookie = "0.17"
+cookie = "0.18.1"
 data-encoding.workspace = true
 delegate = "0.6"
 bytes.workspace = true
@@ -48,12 +48,12 @@ sea-orm = { version = "0.12.15", features = [
 serde.workspace = true
 serde_json.workspace = true
 thiserror = "1.0"
-tokio = { version = "1.20", features = ["tracing", "signal"] }
-tokio-tungstenite = { version = "0.24", features = ["rustls-tls-native-roots"] }
+tokio = { version = "1.43.0", features = ["tracing", "signal"] }
+tokio-tungstenite = { version = "0.26.1", features = ["rustls-tls-native-roots"] }
 tracing.workspace = true
 omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
 omnitron-gate-core = { version = "*", path = "../omnitron-gate-core" }
-omnitron-gate-db-entities = { version = "*", path = "../omnitron-gate-db-entities" }
+omnitron-db-entities = { version = "*", path = "../omnitron-db-entities" }
 omnitron-gate-protocol-ssh = { version = "*", path = "../omnitron-gate-protocol-ssh" }
 omnitron-web = { version = "*", path = "../omnitron-web" }
 percent-encoding = "2.1"

@@ -1,7 +1,7 @@
 use futures::{stream, StreamExt};
 use omnitron_gate_common::TargetOptions;
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::Target;
+use omnitron_db_entities::Target;
 use poem::web::Data;
 use poem_openapi::param::Query;
 use poem_openapi::payload::Json;

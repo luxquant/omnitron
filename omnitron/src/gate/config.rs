@@ -12,7 +12,7 @@ use omnitron_gate_common::{
 };
 use omnitron_gate_core::consts::{BUILTIN_ADMIN_ROLE_NAME, BUILTIN_ADMIN_USERNAME};
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::{PasswordCredential, Role, User, UserRoleAssignment};
+use omnitron_db_entities::{PasswordCredential, Role, User, UserRoleAssignment};
 use notify::{recommended_watcher, RecursiveMode, Watcher};
 use rcgen::generate_simple_self_signed;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set};
@@ -40,7 +40,8 @@ pub(crate) async fn create_config() -> Result<()> {
   // ---
 
   let data_path = path_from_global("omnitron.gate.data").canonicalize()?;
-  let db_path = data_path.join("db");
+  let base_path = path_from_global("omnitron.gate.base").canonicalize()?;
+  let db_path = base_path.join("db");
   create_dir_all(&db_path)?;
   secure_directory(&db_path)?;
 

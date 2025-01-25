@@ -9,8 +9,8 @@ publish.workspace = true
 
 [dependencies]
 omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
-omnitron-gate-db-entities = { version = "*", path = "../omnitron-gate-db-entities" }
-omnitron-gate-db-migrations = { version = "*", path = "../omnitron-gate-db-migrations" }
+omnitron-db-entities = { version = "*", path = "../omnitron-db-entities" }
+omnitron-db-migrations = { version = "*", path = "../omnitron-db-migrations" }
 
 anyhow = { version = "1.0", features = ["std"] }
 argon2 = "0.4"
@@ -40,7 +40,7 @@ sea-orm = { version = "0.12.15", features = [
 serde.workspace = true
 serde_json.workspace = true
 thiserror = "1.0"
-tokio = { version = "1.20", features = ["tracing"] }
+tokio = { version = "1.43.0", features = ["tracing"] }
 totp-rs = { version = "5.0", features = ["otpauth"] }
 tracing.workspace = true
 tracing-core.workspace = true

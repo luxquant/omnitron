@@ -5,7 +5,7 @@ use poem::web::{Data, FromRequest};
 use poem::{Endpoint, Middleware, Request};
 use serde::Deserialize;
 
-use crate::common::SessionExt;
+use omnitron_api::common::SessionExt;
 
 pub struct TicketMiddleware {}
 
@@ -70,7 +70,7 @@ impl<E: Endpoint> Endpoint for TicketMiddlewareEndpoint<E> {
             None
           }
         } {
-          session.set_auth(crate::common::SessionAuthorization::Ticket {
+          session.set_auth(omnitron_api::common::SessionAuthorization::Ticket {
             username: ticket_model.username,
             target_name: ticket_model.target,
           });

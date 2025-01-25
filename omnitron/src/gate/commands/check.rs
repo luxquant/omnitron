@@ -4,7 +4,7 @@ use tracing::*;
 
 use crate::gate::config::load_config;
 
-pub(crate) async fn command(cli: &crate::Cli) -> Result<()> {
+pub(crate) async fn command() -> Result<()> {
   let config = load_config(true)?;
   if config.store.http.enable {
     TlsCertificateBundle::from_file(config.paths_relative_to.join(&config.store.http.certificate))

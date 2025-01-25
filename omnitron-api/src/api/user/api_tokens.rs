@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use omnitron_gate_common::helpers::hash::generate_ticket_secret;
 use omnitron_gate_common::OmnitronError;
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::ApiToken;
+use omnitron_db_entities::ApiToken;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;

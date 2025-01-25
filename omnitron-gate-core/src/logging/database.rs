@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use omnitron_gate_db_entities::LogEntry;
+use omnitron_db_entities::LogEntry;
 use once_cell::sync::OnceCell;
 use sea_orm::query::JsonValue;
 use sea_orm::{ActiveModelTrait, DatabaseConnection};

@@ -3,9 +3,9 @@ use std::time::Duration;
 use anyhow::Result;
 use omnitron_gate_common::helpers::fs::secure_file;
 use omnitron_gate_common::{OmnitronConfig, OmnitronError, TargetOptions, TargetWebAdminOptions};
-use omnitron_gate_db_entities::Target::TargetKind;
-use omnitron_gate_db_entities::{LogEntry, Role, Target, TargetRoleAssignment};
-use omnitron_gate_db_migrations::migrate_database;
+use omnitron_db_entities::Target::TargetKind;
+use omnitron_db_entities::{LogEntry, Role, Target, TargetRoleAssignment};
+use omnitron_db_migrations::migrate_database;
 use sea_orm::sea_query::Expr;
 use sea_orm::{
   ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter,
@@ -57,7 +57,7 @@ pub async fn connect_to_db(config: &OmnitronConfig) -> Result<DatabaseConnection
 }
 
 pub async fn populate_db(db: &mut DatabaseConnection, _config: &mut OmnitronConfig) -> Result<(), OmnitronError> {
-  use omnitron_gate_db_entities::Session;
+  use omnitron_db_entities::Session;
   use sea_orm::ActiveValue::Set;
 
   Session::Entity::update_many()
@@ -124,7 +124,7 @@ pub async fn populate_db(db: &mut DatabaseConnection, _config: &mut OmnitronConf
 }
 
 pub async fn cleanup_db(db: &mut DatabaseConnection, retention: &Duration) -> Result<()> {
-  use omnitron_gate_db_entities::Session;
+  use omnitron_db_entities::Session;
   let cutoff = chrono::Utc::now() - chrono::Duration::from_std(*retention)?;
 
   LogEntry::Entity::delete_many()

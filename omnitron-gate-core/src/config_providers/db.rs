@@ -12,7 +12,7 @@ use omnitron_gate_common::helpers::otp::verify_totp;
 use omnitron_gate_common::{
   OmnitronError, Role, Target, User, UserAuthCredential, UserPasswordCredential, UserPublicKeyCredential, UserTotpCredential,
 };
-use omnitron_gate_db_entities as entities;
+use omnitron_db_entities as entities;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter, QueryOrder, Set};
 use tokio::sync::Mutex;
 use tracing::*;

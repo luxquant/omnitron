@@ -30,7 +30,7 @@ impl Api {
     id: Path<Uuid>,
     _auth: AnySecurityScheme,
   ) -> Result<DeleteTicketResponse, OmnitronError> {
-    use omnitron_gate_db_entities::Ticket;
+    use omnitron_db_entities::Ticket;
     let db = db.lock().await;
 
     let ticket = Ticket::Entity::find_by_id(id.0).one(&*db).await?;

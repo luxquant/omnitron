@@ -10,7 +10,7 @@ use serde::Deserialize;
 use tokio::sync::Mutex;
 use tracing::*;
 
-use crate::common::{RequestAuthorization, SessionAuthorization, SessionExt};
+use omnitron_api::common::{RequestAuthorization, SessionAuthorization, SessionExt};
 use crate::proxy::{proxy_normal_request, proxy_websocket_request};
 
 #[derive(Deserialize)]

@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::HashSet;
 use std::str::FromStr;
 
@@ -15,11 +14,12 @@ use once_cell::sync::Lazy;
 use poem::session::Session;
 use poem::web::websocket::{Message, WebSocket};
 use poem::{Body, FromRequest, IntoResponse, Request, Response};
+use tokio_tungstenite::tungstenite::Utf8Bytes;
 use tokio_tungstenite::{connect_async_with_config, tungstenite};
 use tracing::*;
 use url::Url;
 
-use crate::common::{SessionAuthorization, SessionExt};
+use omnitron_api::common::{SessionAuthorization, SessionExt};
 use crate::logging::{get_client_ip, log_request_result};
 
 static X_OMNITRON_USERNAME: HeaderName = HeaderName::from_static("x-omnitron-username");
@@ -379,23 +379,23 @@ async fn proxy_ws_inner(req: &Request, ws: WebSocket, uri: Uri, options: &Target
             tracing::debug!("Server: {:?}", msg);
             match msg? {
               Message::Binary(data) => {
-                client_sink.send(tungstenite::Message::Binary(data)).await?;
+                client_sink.send(tungstenite::Message::Binary(data.into())).await?;
               }
               Message::Text(text) => {
-                client_sink.send(tungstenite::Message::Text(text)).await?;
+                client_sink.send(tungstenite::Message::Text(text.into())).await?;
               }
               Message::Ping(data) => {
-                client_sink.send(tungstenite::Message::Ping(data)).await?;
+                client_sink.send(tungstenite::Message::Ping(data.into())).await?;
               }
               Message::Pong(data) => {
-                client_sink.send(tungstenite::Message::Pong(data)).await?;
+                client_sink.send(tungstenite::Message::Pong(data.into())).await?;
               }
               Message::Close(data) => {
                 client_sink
                   .send(tungstenite::Message::Close(data.map(|data| {
                     tungstenite::protocol::CloseFrame {
                       code: u16::from(data.0).into(),
-                      reason: Cow::Owned(data.1),
+                      reason: Utf8Bytes::from(data.1),
                     }
                   })))
                   .await?;
@@ -410,21 +410,21 @@ async fn proxy_ws_inner(req: &Request, ws: WebSocket, uri: Uri, options: &Target
             tracing::debug!("Client: {:?}", msg);
             match msg? {
               tungstenite::Message::Binary(data) => {
-                server_sink.send(Message::Binary(data)).await?;
+                server_sink.send(Message::Binary(data.into())).await?;
               }
               tungstenite::Message::Text(text) => {
-                server_sink.send(Message::Text(text)).await?;
+                server_sink.send(Message::Text(text.to_string())).await?;
               }
               tungstenite::Message::Ping(data) => {
-                server_sink.send(Message::Ping(data)).await?;
+                server_sink.send(Message::Ping(data.into())).await?;
               }
               tungstenite::Message::Pong(data) => {
-                server_sink.send(Message::Pong(data)).await?;
+                server_sink.send(Message::Pong(data.into())).await?;
               }
               tungstenite::Message::Close(data) => {
                 server_sink
                   .send(Message::Close(
-                    data.map(|data| (u16::from(data.code).into(), data.reason.into_owned())),
+                    data.map(|data| (u16::from(data.code).into(), data.reason.to_string())),
                   ))
                   .await?;
               }

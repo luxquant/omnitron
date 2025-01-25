@@ -1,5 +1,5 @@
 use omnitron_gate_common::OmnitronError;
-use omnitron_gate_db_entities as entities;
+use omnitron_db_entities as entities;
 use poem::session::Session;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use tracing::info;

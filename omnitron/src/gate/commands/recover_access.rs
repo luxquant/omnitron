@@ -3,7 +3,7 @@ use dialoguer::theme::ColorfulTheme;
 use omnitron_gate_common::auth::CredentialKind;
 use omnitron_gate_common::{Secret, User as UserConfig, UserPasswordCredential};
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::{PasswordCredential, User};
+use omnitron_db_entities::{PasswordCredential, User};
 use sea_orm::{ActiveModelTrait, EntityTrait, QueryOrder, Set};
 use tracing::*;
 use uuid::Uuid;
@@ -11,7 +11,7 @@ use uuid::Uuid;
 use crate::gate::commands::common::assert_interactive_terminal;
 use crate::gate::config::load_config;
 
-pub(crate) async fn command(cli: &crate::Cli, username: &Option<String>) -> Result<()> {
+pub(crate) async fn command(username: &Option<String>) -> Result<()> {
   assert_interactive_terminal();
 
   let config = load_config(true)?;

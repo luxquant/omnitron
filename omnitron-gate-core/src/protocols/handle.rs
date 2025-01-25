@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use omnitron_gate_common::{OmnitronError, SessionId, Target};
-use omnitron_gate_db_entities::Session;
+use omnitron_db_entities::Session;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use tokio::sync::Mutex;
 

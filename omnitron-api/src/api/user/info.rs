@@ -1,6 +1,6 @@
 use omnitron_gate_common::OmnitronError;
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::Parameters;
+use omnitron_db_entities::Parameters;
 use poem::session::Session;
 use poem::web::Data;
 use poem::Request;

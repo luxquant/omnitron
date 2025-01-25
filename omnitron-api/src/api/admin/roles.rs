@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use omnitron_gate_common::{OmnitronError, Role as RoleConfig};
 use omnitron_gate_core::consts::BUILTIN_ADMIN_ROLE_NAME;
-use omnitron_gate_db_entities::Role;
+use omnitron_db_entities::Role;
 use poem::web::Data;
 use poem_openapi::param::{Path, Query};
 use poem_openapi::payload::Json;
@@ -64,7 +64,7 @@ impl ListApi {
     body: Json<RoleDataRequest>,
     _auth: AnySecurityScheme,
   ) -> Result<CreateRoleResponse, OmnitronError> {
-    use omnitron_gate_db_entities::Role;
+    use omnitron_db_entities::Role;
 
     if body.name.is_empty() {
       return Ok(CreateRoleResponse::BadRequest(Json("name".into())));

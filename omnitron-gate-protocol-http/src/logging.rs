@@ -6,7 +6,7 @@ use poem::web::Data;
 use poem::{FromRequest, Request};
 use tracing::*;
 
-use crate::session_handle::OmnitronServerHandleFromRequest;
+use omnitron_api::session_handle::OmnitronServerHandleFromRequest;
 
 pub async fn span_for_request(req: &Request) -> poem::Result<Span> {
   let handle = OmnitronServerHandleFromRequest::from_request_without_body(req).await;

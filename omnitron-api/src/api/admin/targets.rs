@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use omnitron_gate_common::{OmnitronError, Role as RoleConfig, Target as TargetConfig, TargetOptions};
 use omnitron_gate_core::consts::BUILTIN_ADMIN_ROLE_NAME;
-use omnitron_gate_db_entities::Target::TargetKind;
-use omnitron_gate_db_entities::{Role, Target, TargetRoleAssignment};
+use omnitron_db_entities::Target::TargetKind;
+use omnitron_db_entities::{Role, Target, TargetRoleAssignment};
 use poem::web::Data;
 use poem_openapi::param::{Path, Query};
 use poem_openapi::payload::Json;

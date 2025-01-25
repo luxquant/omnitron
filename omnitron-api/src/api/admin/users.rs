@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use omnitron_gate_common::{OmnitronError, Role as RoleConfig, User as UserConfig, UserRequireCredentialsPolicy};
-use omnitron_gate_db_entities::{Role, User, UserRoleAssignment};
+use omnitron_db_entities::{Role, User, UserRoleAssignment};
 use poem::web::Data;
 use poem_openapi::param::{Path, Query};
 use poem_openapi::payload::Json;

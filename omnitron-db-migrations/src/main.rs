@@ -1,4 +1,4 @@
-use omnitron_gate_db_migrations::Migrator;
+use omnitron_db_migrations::Migrator;
 use sea_orm_migration::prelude::*;
 
 #[tokio::main]

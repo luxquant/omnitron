@@ -41,7 +41,7 @@ impl Api {
     logged_in_only: Query<Option<bool>>,
     _auth: AnySecurityScheme,
   ) -> poem::Result<GetSessionsResponse> {
-    use omnitron_gate_db_entities::Session;
+    use omnitron_db_entities::Session;
 
     let db = db.lock().await;
     let mut q = Session::Entity::find().order_by_desc(Session::Column::Started);

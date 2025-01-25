@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use omnitron_gate_common::{OmnitronError, User, UserPasswordCredential, UserRequireCredentialsPolicy};
 use omnitron_gate_core::Services;
-use omnitron_gate_db_entities::{self as entities, Parameters, PasswordCredential, PublicKeyCredential};
+use omnitron_db_entities::{self as entities, Parameters, PasswordCredential, PublicKeyCredential};
 use http::StatusCode;
 use poem::web::Data;
 use poem::{Endpoint, EndpointExt, FromRequest, IntoResponse};

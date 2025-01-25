@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use omnitron_gate_db_entities::KnownHost;
+use omnitron_db_entities::KnownHost;
 use russh::keys::{PublicKey, PublicKeyBase64};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use tokio::sync::Mutex;

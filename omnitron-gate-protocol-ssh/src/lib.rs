@@ -70,7 +70,7 @@ impl ProtocolServer for SSHProtocolServer {
               let _ = reply.send(false);
             }
             SshHostKeyVerificationMode::Prompt => {
-              if dialoguer::Confirm::new().with_prompt("Trust this key?").interact()? {
+              if dialoguer::Confirm::new().with_prompt("Trust this key?").interact().unwrap() {
                 let _ = reply.send(true);
               } else {
                 let _ = reply.send(false);

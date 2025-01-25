@@ -2,7 +2,7 @@ use http::header::Entry;
 use poem::web::cookie::Cookie;
 use poem::{Endpoint, IntoResponse, Middleware, Request, Response};
 
-use crate::common::SESSION_COOKIE_NAME;
+use omnitron_api::common::SESSION_COOKIE_NAME;
 
 pub struct CookieHostMiddleware {}
 

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use omnitron_gate_common::OmnitronError;
 use omnitron_gate_core::{SessionSnapshot, State};
-use omnitron_gate_db_entities::Session;
+use omnitron_db_entities::Session;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;

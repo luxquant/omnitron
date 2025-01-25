@@ -12,7 +12,7 @@ omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
 omnitron-gate-core = { version = "*", path = "../omnitron-gate-core" }
 anyhow = { version = "1.0", features = ["std"] }
 async-trait = "0.1.85"
-tokio = { version = "1.20", features = ["tracing", "signal"] }
+tokio = { version = "1.43.0", features = ["tracing", "signal"] }
 tracing.workspace = true
 uuid = { version = "1.2" }
 bytes.workspace = true

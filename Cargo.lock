@@ -992,16 +992,6 @@ checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
 
 [[package]]
 name = "cookie"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7efb37c3e1ccb1ff97164ad95ac1606e8ccd35b3fa0a7d99a304c7f4a428cc24"
-dependencies = [
- "time",
- "version_check",
-]
-
-[[package]]
-name = "cookie"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ddef33a339a91ea89fb53151bd0a4689cfce27055c291dfa69945475d22c747"
@@ -1471,13 +1461,14 @@ dependencies = [
 
 [[package]]
 name = "dialoguer"
-version = "0.10.4"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59c6f2989294b9a498d3ad5491a79c6deb604617378e1cdc4bfc1c1361fe2f87"
+checksum = "658bce805d770f407bc62102fca7c2c64ceef2fbcb2b8bd19d2765ce093980de"
 dependencies = [
  "console",
  "shell-words",
  "tempfile",
+ "thiserror 1.0.69",
  "zeroize",
 ]
 
@@ -3542,9 +3533,9 @@ dependencies = [
  "nix 0.29.0",
  "notify",
  "omnitron-api",
+ "omnitron-db-entities",
  "omnitron-gate-common",
  "omnitron-gate-core",
- "omnitron-gate-db-entities",
  "omnitron-gate-protocol-http",
  "omnitron-gate-protocol-mysql",
  "omnitron-gate-protocol-postgres",
@@ -3574,16 +3565,16 @@ dependencies = [
  "async-trait",
  "bytes",
  "chrono",
- "cookie 0.17.0",
+ "cookie",
  "data-encoding",
  "delegate 0.6.2",
  "futures",
  "hex",
  "http 1.2.0",
  "mime_guess",
+ "omnitron-db-entities",
  "omnitron-gate-common",
  "omnitron-gate-core",
- "omnitron-gate-db-entities",
  "omnitron-gate-protocol-ssh",
  "omnitron-web",
  "once_cell",
@@ -3599,9 +3590,39 @@ dependencies = [
  "serde_json",
  "thiserror 1.0.69",
  "tokio",
- "tokio-tungstenite 0.24.0",
+ "tokio-tungstenite 0.26.1",
  "tracing",
  "url",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-db-entities"
+version = "0.1.2"
+dependencies = [
+ "bytes",
+ "chrono",
+ "omnitron-gate-common",
+ "poem-openapi",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-db-migrations"
+version = "0.1.2"
+dependencies = [
+ "chrono",
+ "data-encoding",
+ "russh",
+ "sea-orm",
+ "sea-orm-migration",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
  "uuid",
 ]
 
@@ -3657,9 +3678,9 @@ dependencies = [
  "data-encoding",
  "futures",
  "humantime-serde",
+ "omnitron-db-entities",
+ "omnitron-db-migrations",
  "omnitron-gate-common",
- "omnitron-gate-db-entities",
- "omnitron-gate-db-migrations",
  "once_cell",
  "packet",
  "password-hash 0.4.2",
@@ -3698,51 +3719,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "omnitron-gate-db-entities"
-version = "0.1.2"
-dependencies = [
- "bytes",
- "chrono",
- "omnitron-gate-common",
- "poem-openapi",
- "sea-orm",
- "serde",
- "serde_json",
- "uuid",
-]
-
-[[package]]
-name = "omnitron-gate-db-migrations"
-version = "0.1.2"
-dependencies = [
- "chrono",
- "data-encoding",
- "russh",
- "sea-orm",
- "sea-orm-migration",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
 name = "omnitron-gate-protocol-http"
 version = "0.1.2"
 dependencies = [
  "anyhow",
  "async-trait",
  "chrono",
- "cookie 0.17.0",
+ "cookie",
  "data-encoding",
  "delegate 0.6.2",
  "futures",
  "http 1.2.0",
  "omnitron-api",
+ "omnitron-db-entities",
  "omnitron-gate-common",
  "omnitron-gate-core",
- "omnitron-gate-db-entities",
  "omnitron-web",
  "once_cell",
  "percent-encoding",
@@ -3754,7 +3745,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
- "tokio-tungstenite 0.24.0",
+ "tokio-tungstenite 0.26.1",
  "tracing",
  "url",
  "uuid",
@@ -3770,10 +3761,10 @@ dependencies = [
  "flate2",
  "futures",
  "mysql_common",
+ "omnitron-db-entities",
  "omnitron-gate-common",
  "omnitron-gate-core",
  "omnitron-gate-database-protocols",
- "omnitron-gate-db-entities",
  "once_cell",
  "password-hash 0.2.1",
  "rand",
@@ -3823,9 +3814,9 @@ dependencies = [
  "dialoguer",
  "ed25519-dalek",
  "futures",
+ "omnitron-db-entities",
  "omnitron-gate-common",
  "omnitron-gate-core",
- "omnitron-gate-db-entities",
  "russh",
  "sea-orm",
  "thiserror 1.0.69",
@@ -4542,7 +4533,7 @@ dependencies = [
  "base64 0.22.1",
  "bytes",
  "chrono",
- "cookie 0.18.1",
+ "cookie",
  "futures-util",
  "headers",
  "hex",
@@ -5401,7 +5392,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e274915a20ee3065f611c044bd63c40757396b6dbc057d6046aec27f14f882b9"
 dependencies = [
- "cookie 0.18.1",
+ "cookie",
  "either",
  "futures",
  "http 0.2.12",
@@ -7043,22 +7034,6 @@ dependencies = [
 
 [[package]]
 name = "tokio-tungstenite"
-version = "0.24.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edc5f74e248dc973e0dbb7b74c7e0d6fcc301c694ff50049504004ef4d0cdcd9"
-dependencies = [
- "futures-util",
- "log",
- "rustls 0.23.21",
- "rustls-native-certs 0.8.1",
- "rustls-pki-types",
- "tokio",
- "tokio-rustls 0.26.1",
- "tungstenite 0.24.0",
-]
-
-[[package]]
-name = "tokio-tungstenite"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c28562dd8aea311048ed1ab9372a6b9a59977e1b308afb87c985c1f2b3206938"
@@ -7067,6 +7042,22 @@ dependencies = [
  "log",
  "tokio",
  "tungstenite 0.25.0",
+]
+
+[[package]]
+name = "tokio-tungstenite"
+version = "0.26.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be4bf6fecd69fcdede0ec680aaf474cdab988f9de6bc73d3758f0160e3b7025a"
+dependencies = [
+ "futures-util",
+ "log",
+ "rustls 0.23.21",
+ "rustls-native-certs 0.8.1",
+ "rustls-pki-types",
+ "tokio",
+ "tokio-rustls 0.26.1",
+ "tungstenite 0.26.1",
 ]
 
 [[package]]
@@ -7311,26 +7302,6 @@ dependencies = [
 
 [[package]]
 name = "tungstenite"
-version = "0.24.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18e5b8366ee7a95b16d32197d0b2604b43a0be89dc5fac9f8e96ccafbaedda8a"
-dependencies = [
- "byteorder",
- "bytes",
- "data-encoding",
- "http 1.2.0",
- "httparse",
- "log",
- "rand",
- "rustls 0.23.21",
- "rustls-pki-types",
- "sha1",
- "thiserror 1.0.69",
- "utf-8",
-]
-
-[[package]]
-name = "tungstenite"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "326eb16466ed89221beef69dbc94f517ee888bae959895472133924a25f7070e"
@@ -7342,6 +7313,26 @@ dependencies = [
  "httparse",
  "log",
  "rand",
+ "sha1",
+ "thiserror 2.0.11",
+ "utf-8",
+]
+
+[[package]]
+name = "tungstenite"
+version = "0.26.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413083a99c579593656008130e29255e54dcaae495be556cc26888f211648c24"
+dependencies = [
+ "byteorder",
+ "bytes",
+ "data-encoding",
+ "http 1.2.0",
+ "httparse",
+ "log",
+ "rand",
+ "rustls 0.23.21",
+ "rustls-pki-types",
  "sha1",
  "thiserror 2.0.11",
  "utf-8",

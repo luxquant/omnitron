@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
 use omnitron_gate_common::{OmnitronError, UserPublicKeyCredential};
-use omnitron_gate_db_entities::PublicKeyCredential;
+use omnitron_db_entities::PublicKeyCredential;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;

@@ -5,7 +5,7 @@ use tracing::*;
 
 use crate::gate::config::load_config;
 
-pub(crate) async fn command(cli: &crate::Cli, target_name: &String) -> Result<()> {
+pub(crate) async fn command(target_name: &String) -> Result<()> {
   let config = load_config(true)?;
   let services = Services::new(config.clone(), None).await?;
 
