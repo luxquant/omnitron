@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use futures::{SinkExt, StreamExt};
-use gate_core::{SessionSnapshot, State};
+use omnitron_gate_core::{SessionSnapshot, State};
 use poem::session::Session;
 use poem::web::websocket::{Message, WebSocket};
 use poem::web::Data;
@@ -41,7 +41,7 @@ impl Api {
     logged_in_only: Query<Option<bool>>,
     _auth: AnySecurityScheme,
   ) -> poem::Result<GetSessionsResponse> {
-    use gate_db_entities::Session;
+    use omnitron_gate_db_entities::Session;
 
     let db = db.lock().await;
     let mut q = Session::Entity::find().order_by_desc(Session::Column::Started);

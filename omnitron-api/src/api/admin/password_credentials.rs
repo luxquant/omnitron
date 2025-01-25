@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use gate_common::{OmnitronError, Secret, UserPasswordCredential};
-use gate_db_entities::PasswordCredential;
+use omnitron_gate_common::{OmnitronError, Secret, UserPasswordCredential};
+use omnitron_gate_db_entities::PasswordCredential;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;

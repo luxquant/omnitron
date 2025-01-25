@@ -229,6 +229,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d62b7694a562cdf5a74227903507c56ab2cc8bdd1f781ed5cb4cf9c9f810bfc"
 
 [[package]]
+name = "arraydeque"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d902e3d592a523def97af8f317b08ce16b7ab854c1985a0c671e6f15cebc236"
+
+[[package]]
 name = "arrayref"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -904,16 +910,14 @@ dependencies = [
 
 [[package]]
 name = "config"
-version = "0.13.4"
+version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23738e11972c7643e4ec947840fc463b6a571afcd3e735bdfce7d03c7a784aca"
+checksum = "e329294a796e9b22329669c1f433a746983f9e324e07f4ef135be81bb2262de4"
 dependencies = [
- "async-trait",
- "lazy_static",
- "nom",
  "pathdiff",
  "serde",
- "yaml-rust",
+ "winnow",
+ "yaml-rust2",
 ]
 
 [[package]]
@@ -1984,237 +1988,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
 dependencies = [
  "byteorder",
-]
-
-[[package]]
-name = "gate-common"
-version = "0.1.2"
-dependencies = [
- "aho-corasick",
- "anyhow",
- "argon2 0.4.1",
- "async-trait",
- "bytes",
- "chrono",
- "data-encoding",
- "delegate 0.6.2",
- "futures",
- "humantime-serde",
- "once_cell",
- "password-hash 0.4.2",
- "poem",
- "poem-openapi",
- "rand",
- "rand_chacha",
- "rand_core",
- "russh",
- "rustls 0.23.21",
- "rustls-native-certs 0.6.3",
- "rustls-pemfile 1.0.4",
- "sea-orm",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tokio",
- "tokio-rustls 0.26.1",
- "tokio-stream",
- "totp-rs",
- "tracing",
- "tracing-core",
- "url",
- "uuid",
- "webpki",
-]
-
-[[package]]
-name = "gate-core"
-version = "0.1.2"
-dependencies = [
- "anyhow",
- "argon2 0.4.1",
- "async-trait",
- "bytes",
- "chrono",
- "data-encoding",
- "futures",
- "gate-common",
- "gate-db-entities",
- "gate-db-migrations",
- "humantime-serde",
- "once_cell",
- "packet",
- "password-hash 0.4.2",
- "poem",
- "poem-openapi",
- "rand",
- "rand_chacha",
- "rand_core",
- "rustls 0.23.21",
- "rustls-pemfile 1.0.4",
- "sea-orm",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tokio",
- "totp-rs",
- "tracing",
- "tracing-core",
- "tracing-subscriber",
- "url",
- "uuid",
- "webpki",
-]
-
-[[package]]
-name = "gate-database-protocols"
-version = "0.1.2"
-dependencies = [
- "bitflags 1.3.2",
- "bytes",
- "futures-core",
- "futures-util",
- "memchr",
- "thiserror 1.0.69",
- "tokio",
-]
-
-[[package]]
-name = "gate-db-entities"
-version = "0.1.2"
-dependencies = [
- "bytes",
- "chrono",
- "gate-common",
- "poem-openapi",
- "sea-orm",
- "serde",
- "serde_json",
- "uuid",
-]
-
-[[package]]
-name = "gate-db-migrations"
-version = "0.1.2"
-dependencies = [
- "chrono",
- "data-encoding",
- "russh",
- "sea-orm",
- "sea-orm-migration",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "gate-protocol-http"
-version = "0.1.2"
-dependencies = [
- "anyhow",
- "async-trait",
- "chrono",
- "cookie 0.17.0",
- "data-encoding",
- "delegate 0.6.2",
- "futures",
- "gate-common",
- "gate-core",
- "gate-db-entities",
- "http 1.2.0",
- "omnitron-api",
- "omnitron-web",
- "once_cell",
- "percent-encoding",
- "poem",
- "poem-openapi",
- "regex",
- "reqwest 0.12.12",
- "sea-orm",
- "serde",
- "serde_json",
- "tokio",
- "tokio-tungstenite 0.24.0",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "gate-protocol-mysql"
-version = "0.1.2"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "flate2",
- "futures",
- "gate-common",
- "gate-core",
- "gate-database-protocols",
- "gate-db-entities",
- "mysql_common",
- "once_cell",
- "password-hash 0.2.1",
- "rand",
- "rustls 0.23.21",
- "rustls-pemfile 1.0.4",
- "sha1",
- "thiserror 1.0.69",
- "tokio",
- "tokio-rustls 0.26.1",
- "tracing",
- "uuid",
- "webpki",
-]
-
-[[package]]
-name = "gate-protocol-postgres"
-version = "0.1.2"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "futures",
- "gate-common",
- "gate-core",
- "pgwire",
- "rsasl",
- "rustls 0.23.21",
- "rustls-native-certs 0.6.3",
- "rustls-pemfile 1.0.4",
- "thiserror 1.0.69",
- "tokio",
- "tokio-rustls 0.26.1",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "gate-protocol-ssh"
-version = "0.1.2"
-dependencies = [
- "ansi_term",
- "anyhow",
- "async-trait",
- "bimap",
- "bytes",
- "curve25519-dalek",
- "dialoguer",
- "ed25519-dalek",
- "futures",
- "gate-common",
- "gate-core",
- "gate-db-entities",
- "russh",
- "sea-orm",
- "thiserror 1.0.69",
- "time",
- "tokio",
- "tracing",
- "uuid",
- "zeroize",
 ]
 
 [[package]]
@@ -3342,12 +3115,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "linked-hash-map"
-version = "0.5.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
-
-[[package]]
 name = "linux-raw-sys"
 version = "0.4.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3397,6 +3164,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "19b955cdeb2a02b9117f121ce63aa52d08ade45de53e48fe6a38b39c10f6f709"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "machine-uid"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c4506fa0abb0a2ea93f5862f55973da0a662d2ad0e98f337a1c5aac657f0892"
+dependencies = [
+ "libc",
+ "winreg 0.52.0",
 ]
 
 [[package]]
@@ -3759,18 +3536,19 @@ dependencies = [
  "dialoguer",
  "dirs 6.0.0",
  "futures",
- "gate-common",
- "gate-core",
- "gate-db-entities",
- "gate-protocol-http",
- "gate-protocol-mysql",
- "gate-protocol-postgres",
- "gate-protocol-ssh",
  "global_placeholders",
+ "machine-uid",
  "macros-rs 1.4.1",
  "nix 0.29.0",
  "notify",
  "omnitron-api",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "omnitron-gate-db-entities",
+ "omnitron-gate-protocol-http",
+ "omnitron-gate-protocol-mysql",
+ "omnitron-gate-protocol-postgres",
+ "omnitron-gate-protocol-ssh",
  "omnitron-pm",
  "omnitron-rpc",
  "psutil",
@@ -3800,13 +3578,13 @@ dependencies = [
  "data-encoding",
  "delegate 0.6.2",
  "futures",
- "gate-common",
- "gate-core",
- "gate-db-entities",
- "gate-protocol-ssh",
  "hex",
  "http 1.2.0",
  "mime_guess",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "omnitron-gate-db-entities",
+ "omnitron-gate-protocol-ssh",
  "omnitron-web",
  "once_cell",
  "percent-encoding",
@@ -3825,6 +3603,237 @@ dependencies = [
  "tracing",
  "url",
  "uuid",
+]
+
+[[package]]
+name = "omnitron-gate-common"
+version = "0.1.2"
+dependencies = [
+ "aho-corasick",
+ "anyhow",
+ "argon2 0.4.1",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "data-encoding",
+ "delegate 0.6.2",
+ "futures",
+ "humantime-serde",
+ "once_cell",
+ "password-hash 0.4.2",
+ "poem",
+ "poem-openapi",
+ "rand",
+ "rand_chacha",
+ "rand_core",
+ "russh",
+ "rustls 0.23.21",
+ "rustls-native-certs 0.6.3",
+ "rustls-pemfile 1.0.4",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tokio-rustls 0.26.1",
+ "tokio-stream",
+ "totp-rs",
+ "tracing",
+ "tracing-core",
+ "url",
+ "uuid",
+ "webpki",
+]
+
+[[package]]
+name = "omnitron-gate-core"
+version = "0.1.2"
+dependencies = [
+ "anyhow",
+ "argon2 0.4.1",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "data-encoding",
+ "futures",
+ "humantime-serde",
+ "omnitron-gate-common",
+ "omnitron-gate-db-entities",
+ "omnitron-gate-db-migrations",
+ "once_cell",
+ "packet",
+ "password-hash 0.4.2",
+ "poem",
+ "poem-openapi",
+ "rand",
+ "rand_chacha",
+ "rand_core",
+ "rustls 0.23.21",
+ "rustls-pemfile 1.0.4",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "totp-rs",
+ "tracing",
+ "tracing-core",
+ "tracing-subscriber",
+ "url",
+ "uuid",
+ "webpki",
+]
+
+[[package]]
+name = "omnitron-gate-database-protocols"
+version = "0.1.2"
+dependencies = [
+ "bitflags 1.3.2",
+ "bytes",
+ "futures-core",
+ "futures-util",
+ "memchr",
+ "thiserror 1.0.69",
+ "tokio",
+]
+
+[[package]]
+name = "omnitron-gate-db-entities"
+version = "0.1.2"
+dependencies = [
+ "bytes",
+ "chrono",
+ "omnitron-gate-common",
+ "poem-openapi",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-gate-db-migrations"
+version = "0.1.2"
+dependencies = [
+ "chrono",
+ "data-encoding",
+ "russh",
+ "sea-orm",
+ "sea-orm-migration",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-gate-protocol-http"
+version = "0.1.2"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "chrono",
+ "cookie 0.17.0",
+ "data-encoding",
+ "delegate 0.6.2",
+ "futures",
+ "http 1.2.0",
+ "omnitron-api",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "omnitron-gate-db-entities",
+ "omnitron-web",
+ "once_cell",
+ "percent-encoding",
+ "poem",
+ "poem-openapi",
+ "regex",
+ "reqwest 0.12.12",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite 0.24.0",
+ "tracing",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-gate-protocol-mysql"
+version = "0.1.2"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytes",
+ "flate2",
+ "futures",
+ "mysql_common",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "omnitron-gate-database-protocols",
+ "omnitron-gate-db-entities",
+ "once_cell",
+ "password-hash 0.2.1",
+ "rand",
+ "rustls 0.23.21",
+ "rustls-pemfile 1.0.4",
+ "sha1",
+ "thiserror 1.0.69",
+ "tokio",
+ "tokio-rustls 0.26.1",
+ "tracing",
+ "uuid",
+ "webpki",
+]
+
+[[package]]
+name = "omnitron-gate-protocol-postgres"
+version = "0.1.2"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytes",
+ "futures",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "pgwire",
+ "rsasl",
+ "rustls 0.23.21",
+ "rustls-native-certs 0.6.3",
+ "rustls-pemfile 1.0.4",
+ "thiserror 1.0.69",
+ "tokio",
+ "tokio-rustls 0.26.1",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "omnitron-gate-protocol-ssh"
+version = "0.1.2"
+dependencies = [
+ "ansi_term",
+ "anyhow",
+ "async-trait",
+ "bimap",
+ "bytes",
+ "curve25519-dalek",
+ "dialoguer",
+ "ed25519-dalek",
+ "futures",
+ "omnitron-gate-common",
+ "omnitron-gate-core",
+ "omnitron-gate-db-entities",
+ "russh",
+ "sea-orm",
+ "thiserror 1.0.69",
+ "time",
+ "tokio",
+ "tracing",
+ "uuid",
+ "zeroize",
 ]
 
 [[package]]
@@ -5205,7 +5214,7 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "webpki-roots",
- "winreg",
+ "winreg 0.50.0",
 ]
 
 [[package]]
@@ -8192,6 +8201,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "winreg"
+version = "0.52.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a277a57398d4bfa075df44f501a17cfdf8542d224f0d36095a2adc7aee4ef0a5"
+dependencies = [
+ "cfg-if",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
 name = "write16"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8224,12 +8243,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "yaml-rust"
-version = "0.4.5"
+name = "yaml-rust2"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
+checksum = "2a1a1c0bc9823338a3bdf8c61f994f23ac004c6fa32c08cd152984499b445e8d"
 dependencies = [
- "linked-hash-map",
+ "arraydeque",
+ "encoding_rs",
+ "hashlink",
 ]
 
 [[package]]

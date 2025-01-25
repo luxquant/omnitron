@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use gate_common::OmnitronError;
+use omnitron_gate_common::OmnitronError;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::{ApiResponse, OpenApi};
@@ -29,7 +29,7 @@ impl Api {
     id: Path<Uuid>,
     _auth: AnySecurityScheme,
   ) -> Result<DeleteSSHKnownHostResponse, OmnitronError> {
-    use gate_db_entities::KnownHost;
+    use omnitron_gate_db_entities::KnownHost;
     let db = db.lock().await;
 
     let known_host = KnownHost::Entity::find_by_id(id.0).one(&*db).await?;

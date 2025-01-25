@@ -4,15 +4,15 @@ cargo-features = ["profile-rustflags"]
 members = [
     "omnitron",
     "omnitron-api",
-    "gate-common",
-    "gate-core",
-    "gate-db-migrations",
-    "gate-db-entities",
-    "gate-database-protocols",
-    "gate-protocol-http",
-    "gate-protocol-mysql",
-    "gate-protocol-postgres",
-    "gate-protocol-ssh",
+    "omnitron-gate-common",
+    "omnitron-gate-core",
+    "omnitron-gate-db-migrations",
+    "omnitron-gate-db-entities",
+    "omnitron-gate-database-protocols",
+    "omnitron-gate-protocol-http",
+    "omnitron-gate-protocol-mysql",
+    "omnitron-gate-protocol-postgres",
+    "omnitron-gate-protocol-ssh",
     "omnitron-web",
     "omnitron-pm",
     "omnitron-rpc",
@@ -34,10 +34,13 @@ publish = false
 [workspace.dependencies]
 bytes = "1.9.0"
 data-encoding = "2.7.0"
+machine-uid = "0.5.3"
 serde = "1.0.217"
 serde_json = "1.0.135"
 russh = { version = "0.50.0-beta.10" }
 tracing = "0.1.41"
+tracing-core = "0.1.33"
+console-subscriber = "0.4.1"
 futures = "0.3.31"
 tokio-stream = { version = "0.1.17", features = ["net"] }
 

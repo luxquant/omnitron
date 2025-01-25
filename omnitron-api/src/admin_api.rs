@@ -1,4 +1,4 @@
-use gate_core::Services;
+use omnitron_gate_core::Services;
 use poem::{EndpointExt, IntoEndpoint, Route};
 use poem_openapi::OpenApiService;
 

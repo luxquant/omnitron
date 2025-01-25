@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use gate_common::OmnitronError;
+use omnitron_gate_common::OmnitronError;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::{ApiResponse, OpenApi};
@@ -30,7 +30,7 @@ impl Api {
     id: Path<Uuid>,
     _auth: AnySecurityScheme,
   ) -> Result<DeleteTicketResponse, OmnitronError> {
-    use gate_db_entities::Ticket;
+    use omnitron_gate_db_entities::Ticket;
     let db = db.lock().await;
 
     let ticket = Ticket::Entity::find_by_id(id.0).one(&*db).await?;

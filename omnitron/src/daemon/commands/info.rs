@@ -34,12 +34,12 @@ pub(crate) async fn info(format: &String) {
     cpu_percent: String,
     #[tabled(rename = "memory usage")]
     memory_usage: String,
-    // #[tabled(rename = "daemon type")]
-    // external: String,
     #[tabled(rename = "process count")]
     process_count: usize,
     uptime: String,
     pid: String,
+    #[tabled(rename = "machine uid")]
+    machine_uid: String,
     version: String,
     status: ColoredString,
   }
@@ -55,6 +55,7 @@ pub(crate) async fn info(format: &String) {
        "uptime": &self.uptime.trim(),
        "pid": &self.pid.trim(),
        "version": &self.version.trim(),
+       "machine_uid": &self.machine_uid.trim(),
        "status": &self.status.0.trim(),
       });
 
@@ -115,6 +116,7 @@ pub(crate) async fn info(format: &String) {
     path: global!("omnitron.base"),
     process_count: runner.count(),
     pid_file: format!("{}  ", global!("omnitron.pid")),
+    machine_uid: global!("omnitron.muid"),
     version: version,
     status: ColoredString(ternary!(pid_exists, "online".green().bold(), "stopped".red().bold())),
   }];

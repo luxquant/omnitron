@@ -41,7 +41,7 @@ reqwest = { version = "0.12", features = [
 ], default-features = false }
 russh.workspace = true
 rust-embed = "8.3"
-sea-orm = { version = "0.12", features = [
+sea-orm = { version = "0.12.15", features = [
     "runtime-tokio-rustls",
     "macros",
 ], default-features = false }
@@ -51,10 +51,10 @@ thiserror = "1.0"
 tokio = { version = "1.20", features = ["tracing", "signal"] }
 tokio-tungstenite = { version = "0.24", features = ["rustls-tls-native-roots"] }
 tracing.workspace = true
-gate-common = { version = "*", path = "../gate-common" }
-gate-core = { version = "*", path = "../gate-core" }
-gate-db-entities = { version = "*", path = "../gate-db-entities" }
-gate-protocol-ssh = { version = "*", path = "../gate-protocol-ssh" }
+omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
+omnitron-gate-core = { version = "*", path = "../omnitron-gate-core" }
+omnitron-gate-db-entities = { version = "*", path = "../omnitron-gate-db-entities" }
+omnitron-gate-protocol-ssh = { version = "*", path = "../omnitron-gate-protocol-ssh" }
 omnitron-web = { version = "*", path = "../omnitron-web" }
 percent-encoding = "2.1"
 uuid = { version = "1.3", features = ["v4", "serde"] }

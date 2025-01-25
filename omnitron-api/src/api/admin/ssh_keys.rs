@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use gate_common::{OmnitronConfig, OmnitronError};
+use omnitron_gate_common::{OmnitronConfig, OmnitronError};
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};
@@ -33,7 +33,7 @@ impl Api {
     _auth: AnySecurityScheme,
   ) -> Result<GetSSHOwnKeysResponse, OmnitronError> {
     let config = config.lock().await;
-    let keys = gate_protocol_ssh::load_client_keys(&config)?;
+    let keys = omnitron_gate_protocol_ssh::load_client_keys(&config)?;
 
     let keys = keys
       .into_iter()

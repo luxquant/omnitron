@@ -6,6 +6,7 @@ use macros_rs::exp::then;
 use macros_rs::fmt::crashln;
 use omnitron_pm::file::Exists;
 use omnitron_pm::{config, helpers};
+use machine_uid;
 use tracing::*;
 
 pub fn init() {
@@ -33,6 +34,8 @@ pub fn init() {
         "omnitron.error.log",
         format!("{}/omnitron.error.log", global!("omnitron.base"))
       );
+
+      init!("omnitron.muid", machine_uid::get().unwrap());
 
       // let config = config::read();
       // then!(

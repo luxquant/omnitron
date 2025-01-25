@@ -18,11 +18,11 @@ atty = "0.2"
 bytes.workspace = true
 clap = { version = "4.5.26", features = ["derive"] }
 colored = "2.1.0"
-config = { version = "0.13", features = ["yaml"], default-features = false }
+config = { version = "0.15.6", features = ["yaml"], default-features = false }
 console = { version = "0.15", default-features = false }
 console-subscriber = { version = "0.4.1", optional = true }
 data-encoding.workspace = true
-dialoguer = "0.10"
+dialoguer = "0.10.0"
 futures.workspace = true
 macros-rs = "1.4.1"
 notify = "5.1"
@@ -30,11 +30,11 @@ rcgen = { version = "0.10", features = ["zeroize"] }
 serde.workspace = true
 serde_json.workspace = true
 serde_yaml = "0.9"
-sea-orm = { version = "0.12.2", default-features = false }
+sea-orm = { version = "0.12.15", default-features = false }
 time = "0.3"
 tokio = { version = "1.20", features = ["tracing", "signal", "macros"] }
 tracing.workspace = true
-tracing-subscriber = { version = "0.3.19", features = [
+tracing-subscriber = { version = "0.3", features = [
     "env-filter",
     "local-time",
 ] }
@@ -44,15 +44,16 @@ dirs = "6.0.0"
 nix = { version = "0.29.0", features = ["process", "fs"] }
 tabled = { version = "0.17.0", features = ["ansi"] }
 chrono = { version = "0.4.39", features = ["serde"] }
+machine-uid.workspace = true
 psutil = { version = "3.3.0", features = ["serde"] }
 omnitron-api = { version = "*", path = "../omnitron-api" }
-gate-common = { version = "*", path = "../gate-common" }
-gate-core = { version = "*", path = "../gate-core" }
-gate-db-entities = { version = "*", path = "../gate-db-entities" }
-gate-protocol-http = { version = "*", path = "../gate-protocol-http" }
-gate-protocol-mysql = { version = "*", path = "../gate-protocol-mysql" }
-gate-protocol-postgres = { version = "*", path = "../gate-protocol-postgres" }
-gate-protocol-ssh = { version = "*", path = "../gate-protocol-ssh" }
+omnitron-gate-common = { version = "*", path = "../omnitron-gate-common" }
+omnitron-gate-core = { version = "*", path = "../omnitron-gate-core" }
+omnitron-gate-db-entities = { version = "*", path = "../omnitron-gate-db-entities" }
+omnitron-gate-protocol-http = { version = "*", path = "../omnitron-gate-protocol-http" }
+omnitron-gate-protocol-mysql = { version = "*", path = "../omnitron-gate-protocol-mysql" }
+omnitron-gate-protocol-postgres = { version = "*", path = "../omnitron-gate-protocol-postgres" }
+omnitron-gate-protocol-ssh = { version = "*", path = "../omnitron-gate-protocol-ssh" }
 omnitron-pm = { version = "*", path = "../omnitron-pm" }
 omnitron-rpc = { version = "*", path = "../omnitron-rpc", features = ["full"]}
 
@@ -62,6 +63,6 @@ sd-notify = "0.4.5"
 [features]
 default = ["sqlite"]
 tokio-console = ["dep:console-subscriber", "tokio/tracing"]
-postgres = ["gate-core/postgres"]
-mysql = ["gate-core/mysql"]
-sqlite = ["gate-core/sqlite"]
+postgres = ["omnitron-gate-core/postgres"]
+mysql = ["omnitron-gate-core/mysql"]
+sqlite = ["omnitron-gate-core/sqlite"]

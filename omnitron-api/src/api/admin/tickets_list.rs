@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use anyhow::Context;
 use chrono::{DateTime, Utc};
-use gate_common::helpers::hash::generate_ticket_secret;
-use gate_common::OmnitronError;
-use gate_db_entities::Ticket;
+use omnitron_gate_common::helpers::hash::generate_ticket_secret;
+use omnitron_gate_common::OmnitronError;
+use omnitron_gate_db_entities::Ticket;
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};
@@ -54,7 +54,7 @@ impl Api {
     db: Data<&Arc<Mutex<DatabaseConnection>>>,
     _auth: AnySecurityScheme,
   ) -> Result<GetTicketsResponse, OmnitronError> {
-    use gate_db_entities::Ticket;
+    use omnitron_gate_db_entities::Ticket;
 
     let db = db.lock().await;
     let tickets = Ticket::Entity::find().all(&*db).await?;
@@ -69,7 +69,7 @@ impl Api {
     body: Json<CreateTicketRequest>,
     _auth: AnySecurityScheme,
   ) -> poem::Result<CreateTicketResponse> {
-    use gate_db_entities::Ticket;
+    use omnitron_gate_db_entities::Ticket;
 
     if body.username.is_empty() {
       return Ok(CreateTicketResponse::BadRequest(Json("username".into())));

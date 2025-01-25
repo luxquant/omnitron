@@ -5,14 +5,14 @@ use std::sync::Arc;
 
 use anyhow::{Context, Result};
 use config::{Config, Environment};
-use gate_common::helpers::fs::{secure_directory, secure_file};
-use gate_common::{
+use omnitron_gate_common::helpers::fs::{secure_directory, secure_file};
+use omnitron_gate_common::{
   HttpConfig, MySqlConfig, OmnitronConfig, OmnitronConfigStore, OmnitronError, PostgresConfig, Secret, SshConfig,
   UserPasswordCredential, UserRequireCredentialsPolicy,
 };
-use gate_core::consts::{BUILTIN_ADMIN_ROLE_NAME, BUILTIN_ADMIN_USERNAME};
-use gate_core::Services;
-use gate_db_entities::{PasswordCredential, Role, User, UserRoleAssignment};
+use omnitron_gate_core::consts::{BUILTIN_ADMIN_ROLE_NAME, BUILTIN_ADMIN_USERNAME};
+use omnitron_gate_core::Services;
+use omnitron_gate_db_entities::{PasswordCredential, Role, User, UserRoleAssignment};
 use notify::{recommended_watcher, RecursiveMode, Watcher};
 use rcgen::generate_simple_self_signed;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set};
@@ -89,8 +89,8 @@ pub(crate) async fn create_config() -> Result<()> {
 
   let config = load_config(true)?;
   let services = Services::new(config.clone(), None).await?;
-  gate_protocol_ssh::generate_host_keys(&config)?;
-  gate_protocol_ssh::generate_client_keys(&config)?;
+  omnitron_gate_protocol_ssh::generate_host_keys(&config)?;
+  omnitron_gate_protocol_ssh::generate_client_keys(&config)?;
 
   {
     let db = services.db.lock().await;

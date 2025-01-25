@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use gate_common::OmnitronError;
-use gate_db_entities::KnownHost;
+use omnitron_gate_common::OmnitronError;
+use omnitron_gate_db_entities::KnownHost;
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, OpenApi};
@@ -26,7 +26,7 @@ impl Api {
     db: Data<&Arc<Mutex<DatabaseConnection>>>,
     _auth: AnySecurityScheme,
   ) -> Result<GetSSHKnownHostsResponse, OmnitronError> {
-    use gate_db_entities::KnownHost;
+    use omnitron_gate_db_entities::KnownHost;
 
     let db = db.lock().await;
     let hosts = KnownHost::Entity::find().all(&*db).await?;

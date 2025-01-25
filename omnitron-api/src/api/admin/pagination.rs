@@ -1,4 +1,4 @@
-use gate_common::OmnitronError;
+use omnitron_gate_common::OmnitronError;
 use poem_openapi::types::{ParseFromJSON, ToJSON};
 use poem_openapi::Object;
 use sea_orm::{ConnectionTrait, EntityTrait, FromQueryResult, PaginatorTrait, QuerySelect, Select};

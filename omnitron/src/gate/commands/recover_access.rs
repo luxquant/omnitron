@@ -1,9 +1,9 @@
 use anyhow::Result;
 use dialoguer::theme::ColorfulTheme;
-use gate_common::auth::CredentialKind;
-use gate_common::{Secret, User as UserConfig, UserPasswordCredential};
-use gate_core::Services;
-use gate_db_entities::{PasswordCredential, User};
+use omnitron_gate_common::auth::CredentialKind;
+use omnitron_gate_common::{Secret, User as UserConfig, UserPasswordCredential};
+use omnitron_gate_core::Services;
+use omnitron_gate_db_entities::{PasswordCredential, User};
 use sea_orm::{ActiveModelTrait, EntityTrait, QueryOrder, Set};
 use tracing::*;
 use uuid::Uuid;
@@ -16,8 +16,8 @@ pub(crate) async fn command(cli: &crate::Cli, username: &Option<String>) -> Resu
 
   let config = load_config(true)?;
   let services = Services::new(config.clone(), None).await?;
-  gate_protocol_ssh::generate_host_keys(&config)?;
-  gate_protocol_ssh::generate_client_keys(&config)?;
+  omnitron_gate_protocol_ssh::generate_host_keys(&config)?;
+  omnitron_gate_protocol_ssh::generate_client_keys(&config)?;
 
   let theme = ColorfulTheme::default();
   let db = services.db.lock().await;

@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use gate_common::{TlsCertificateBundle, TlsPrivateKey};
+use omnitron_gate_common::{TlsCertificateBundle, TlsPrivateKey};
 use tracing::*;
 
 use crate::gate::config::load_config;

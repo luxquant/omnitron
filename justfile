@@ -1,4 +1,4 @@
-projects := "omnitron omnitron-api gate-common gate-db-entities gate-db-migrations gate-database-protocols gate-protocol-ssh gate-protocol-mysql gate-protocol-postgres gate-protocol-http gate-core"
+projects := "omnitron omnitron-api omnitron-gate-common omnitron-gate-db-entities omnitron-gate-db-migrations omnitron-gate-database-protocols omnitron-gate-protocol-ssh omnitron-gate-protocol-mysql omnitron-gate-protocol-postgres omnitron-gate-protocol-http omnitron-gate-core"
 
 run $RUST_BACKTRACE='1' *ARGS='run':
      cargo run --all-features -- --config config.yaml {{ARGS}}
@@ -19,7 +19,7 @@ yarn *ARGS:
     cd omnitron-web && yarn {{ARGS}}
 
 migrate *ARGS:
-    cargo run --all-features -p gate-db-migrations -- {{ARGS}}
+    cargo run --all-features -p omnitron-gate-db-migrations -- {{ARGS}}
 
 lint *ARGS:
     cd omnitron-web && yarn run lint {{ARGS}}
