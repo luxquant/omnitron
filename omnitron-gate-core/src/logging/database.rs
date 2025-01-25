@@ -39,7 +39,7 @@ pub fn install_database_logger(database: Arc<Mutex<DatabaseConnection>>) {
         Err(error) => {
           println!("Ошибка: {:?}", error);
           break;
-        },
+        }
         Ok(log_entry) => {
           let database = database.lock().await;
           if let Err(error) = log_entry.insert(&*database).await {

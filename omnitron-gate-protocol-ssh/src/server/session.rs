@@ -12,7 +12,9 @@ use bytes::Bytes;
 use futures::{Future, FutureExt};
 use omnitron_gate_common::auth::{AuthCredential, AuthResult, AuthSelector, AuthState, CredentialKind};
 use omnitron_gate_common::eventhub::{EventHub, EventSender, EventSubscription};
-use omnitron_gate_common::{OmnitronError, Secret, SessionId, SshHostKeyVerificationMode, Target, TargetOptions, TargetSSHOptions};
+use omnitron_gate_common::{
+  OmnitronError, Secret, SessionId, SshHostKeyVerificationMode, Target, TargetOptions, TargetSSHOptions,
+};
 use omnitron_gate_core::{authorize_ticket, consume_ticket, OmnitronServerHandle, Services};
 use russh::keys::{PublicKey, PublicKeyBase64};
 use russh::{CryptoVec, MethodKind, MethodSet, Sig};

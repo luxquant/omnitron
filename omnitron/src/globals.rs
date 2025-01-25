@@ -2,11 +2,11 @@ use std::fs;
 
 use dirs::home_dir;
 use global_placeholders::{global, init};
+use machine_uid;
 use macros_rs::exp::then;
 use macros_rs::fmt::crashln;
 use omnitron_pm::file::Exists;
 use omnitron_pm::{config, helpers};
-use machine_uid;
 use tracing::*;
 
 pub fn init() {

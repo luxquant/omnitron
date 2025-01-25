@@ -1,11 +1,10 @@
+use omnitron_api::common::SessionExt;
 use omnitron_gate_common::Secret;
 use omnitron_gate_core::{authorize_ticket, consume_ticket, Services};
 use poem::session::Session;
 use poem::web::{Data, FromRequest};
 use poem::{Endpoint, Middleware, Request};
 use serde::Deserialize;
-
-use omnitron_api::common::SessionExt;
 
 pub struct TicketMiddleware {}
 

@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
-use omnitron_gate_common::{SessionId, Target};
 use omnitron_db_entities::Session;
+use omnitron_gate_common::{SessionId, Target};
 use poem_openapi::Object;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;

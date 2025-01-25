@@ -13,14 +13,14 @@ publish.workspace = true
 tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
 chrono = { version = "0.4.39", default-features = false, features = ["serde"] }
 data-encoding.workspace = true
-sea-orm = { version = "0.12.15", features = [
+sea-orm = { version = "1.1.4", features = [
     "runtime-tokio-rustls",
     "macros",
     "with-chrono",
     "with-uuid",
     "with-json",
 ], default-features = false }
-sea-orm-migration = { version = "0.12.15", default-features = false, features = [
+sea-orm-migration = { version = "1.1.4", default-features = false, features = [
     "cli",
 ] }
 russh.workspace = true
@@ -31,5 +31,4 @@ serde.workspace = true
 
 [features]
 postgres = ["sea-orm/sqlx-postgres"]
-mysql = ["sea-orm/sqlx-mysql"]
 sqlite = ["sea-orm/sqlx-sqlite"]

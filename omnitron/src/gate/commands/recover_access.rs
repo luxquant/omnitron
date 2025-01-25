@@ -1,9 +1,9 @@
 use anyhow::Result;
 use dialoguer::theme::ColorfulTheme;
+use omnitron_db_entities::{PasswordCredential, User};
 use omnitron_gate_common::auth::CredentialKind;
 use omnitron_gate_common::{Secret, User as UserConfig, UserPasswordCredential};
 use omnitron_gate_core::Services;
-use omnitron_db_entities::{PasswordCredential, User};
 use sea_orm::{ActiveModelTrait, EntityTrait, QueryOrder, Set};
 use tracing::*;
 use uuid::Uuid;

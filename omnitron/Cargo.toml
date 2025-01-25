@@ -30,8 +30,8 @@ rcgen = { version = "0.10", features = ["zeroize"] }
 serde.workspace = true
 serde_json.workspace = true
 serde_yaml = "0.9"
-sea-orm = { version = "0.12.15", default-features = false }
-time = "0.3"
+sea-orm = { version = "1.1.4", default-features = false }
+time = "0.3.37"
 tokio = { version = "1.43.0", features = ["tracing", "signal", "macros"] }
 tracing.workspace = true
 tracing-subscriber = { version = "0.3", features = [
@@ -64,5 +64,4 @@ sd-notify = "0.4.5"
 default = ["sqlite"]
 tokio-console = ["dep:console-subscriber", "tokio/tracing"]
 postgres = ["omnitron-gate-core/postgres"]
-mysql = ["omnitron-gate-core/mysql"]
 sqlite = ["omnitron-gate-core/sqlite"]

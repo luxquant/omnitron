@@ -11,9 +11,9 @@ use anyhow::Result;
 use async_trait::async_trait;
 pub use client::*;
 pub use common::*;
+pub use keys::*;
 use omnitron_gate_common::{ListenEndpoint, ProtocolName, SshHostKeyVerificationMode, Target, TargetOptions};
 use omnitron_gate_core::{ProtocolServer, Services, TargetTestError};
-pub use keys::*;
 pub use server::run_server;
 use uuid::Uuid;
 

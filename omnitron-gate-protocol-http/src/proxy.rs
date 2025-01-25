@@ -5,10 +5,11 @@ use anyhow::{Context, Result};
 use cookie::Cookie;
 use delegate::delegate;
 use futures::{SinkExt, StreamExt, TryStreamExt};
-use omnitron_gate_common::{try_block, OmnitronError, TargetHTTPOptions, TlsMode};
 use http::header::HeaderName;
 use http::uri::{Authority, Scheme};
 use http::Uri;
+use omnitron_api::common::{SessionAuthorization, SessionExt};
+use omnitron_gate_common::{try_block, OmnitronError, TargetHTTPOptions, TlsMode};
 use omnitron_web::lookup_built_file;
 use once_cell::sync::Lazy;
 use poem::session::Session;
@@ -19,7 +20,6 @@ use tokio_tungstenite::{connect_async_with_config, tungstenite};
 use tracing::*;
 use url::Url;
 
-use omnitron_api::common::{SessionAuthorization, SessionExt};
 use crate::logging::{get_client_ip, log_request_result};
 
 static X_OMNITRON_USERNAME: HeaderName = HeaderName::from_static("x-omnitron-username");

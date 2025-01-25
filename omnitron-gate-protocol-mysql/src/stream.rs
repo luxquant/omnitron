@@ -1,8 +1,8 @@
 use bytes::{Bytes, BytesMut};
-use omnitron_gate_common::{MaybeTlsStream, MaybeTlsStreamError, UpgradableStream};
-use omnitron_gate_database_protocols::io::Encode;
 use mysql_common::proto::codec::error::PacketCodecError;
 use mysql_common::proto::codec::PacketCodec;
+use omnitron_gate_common::{MaybeTlsStream, MaybeTlsStreamError, UpgradableStream};
+use omnitron_gate_database_protocols::io::Encode;
 use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tracing::*;

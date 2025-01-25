@@ -2,8 +2,8 @@ mod handle;
 
 use anyhow::Result;
 use async_trait::async_trait;
-use omnitron_gate_common::{ListenEndpoint, Target};
 pub use handle::{OmnitronServerHandle, SessionHandle};
+use omnitron_gate_common::{ListenEndpoint, Target};
 
 #[derive(Debug, thiserror::Error)]
 pub enum TargetTestError {

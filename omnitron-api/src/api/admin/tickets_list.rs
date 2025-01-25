@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use anyhow::Context;
 use chrono::{DateTime, Utc};
+use omnitron_db_entities::Ticket;
 use omnitron_gate_common::helpers::hash::generate_ticket_secret;
 use omnitron_gate_common::OmnitronError;
-use omnitron_db_entities::Ticket;
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};

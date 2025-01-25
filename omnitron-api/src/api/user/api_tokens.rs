@@ -1,13 +1,15 @@
 use chrono::{DateTime, Utc};
+use omnitron_db_entities::ApiToken;
 use omnitron_gate_common::helpers::hash::generate_ticket_secret;
 use omnitron_gate_common::OmnitronError;
 use omnitron_gate_core::Services;
-use omnitron_db_entities::ApiToken;
 use poem::web::Data;
 use poem_openapi::param::Path;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};
-use sea_orm::{ActiveModelTrait, ColumnTrait, ModelTrait, QueryFilter, Set};
+use sea_orm::entity::{ActiveModelTrait, ColumnTrait, ModelTrait};
+use sea_orm::query::QueryFilter;
+use sea_orm::Set;
 use uuid::Uuid;
 
 use super::common::get_user;

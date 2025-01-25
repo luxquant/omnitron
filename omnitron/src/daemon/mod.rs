@@ -8,11 +8,11 @@ pub(crate) mod server;
 use anyhow::Result;
 use futures::prelude::*;
 use futures::StreamExt;
+use global_placeholders::global;
 use omnitron_gate_core::db::cleanup_db;
 use omnitron_gate_core::logging::install_database_logger;
 use omnitron_gate_core::{ProtocolServer, Services};
 use omnitron_gate_protocol_http::HTTPProtocolServer;
-use global_placeholders::global;
 use omnitron_rpc::server::{BaseChannel, Channel};
 use omnitron_rpc::tokio_serde::formats::Bincode;
 use omnitron_rpc::tokio_util::codec::length_delimited::LengthDelimitedCodec;
@@ -106,12 +106,7 @@ pub(crate) async fn daemon_main(cli: &crate::Cli, enable_admin_token: bool) -> R
         let retention = { services.config.lock().await.store.log.retention };
         let interval = retention / 10;
         #[allow(clippy::explicit_auto_deref)]
-        match cleanup_db(
-          &mut *services.db.lock().await,
-          &retention,
-        )
-        .await
-        {
+        match cleanup_db(&mut *services.db.lock().await, &retention).await {
           Err(error) => error!(?error, "Failed to cleanup the database"),
           Ok(_) => debug!("Database cleaned up, next in {:?}", interval),
         }

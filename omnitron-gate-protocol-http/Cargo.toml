@@ -27,11 +27,11 @@ poem = { version = "3.1.6", features = [
     "embed",
 ] }
 poem-openapi = { version = "5.1.5", features = ["swagger-ui"] }
-reqwest = { version = "0.12", features = [
+reqwest = { version = "0.12.12", features = [
     "rustls-tls-native-roots",
     "stream",
 ], default-features = false }
-sea-orm = { version = "0.12.15", features = [
+sea-orm = { version = "1.1.4", features = [
     "runtime-tokio-rustls",
     "macros",
 ], default-features = false }

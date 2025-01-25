@@ -1,15 +1,14 @@
 use std::time::Duration;
 
 use anyhow::Result;
-use omnitron_gate_common::helpers::fs::secure_file;
-use omnitron_gate_common::{OmnitronConfig, OmnitronError, TargetOptions, TargetWebAdminOptions};
 use omnitron_db_entities::Target::TargetKind;
 use omnitron_db_entities::{LogEntry, Role, Target, TargetRoleAssignment};
 use omnitron_db_migrations::migrate_database;
+use omnitron_gate_common::helpers::fs::secure_file;
+use omnitron_gate_common::{OmnitronConfig, OmnitronError, TargetOptions, TargetWebAdminOptions};
 use sea_orm::sea_query::Expr;
 use sea_orm::{
-  ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter,
-  TransactionTrait,
+  ActiveModelTrait, ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter, TransactionTrait,
 };
 use uuid::Uuid;
 

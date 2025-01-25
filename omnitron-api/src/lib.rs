@@ -1,7 +1,7 @@
 #![feature(decl_macro, proc_macro_hygiene)]
 #![feature(type_alias_impl_trait, try_blocks)]
-pub mod api;
 pub mod admin_api;
+pub mod api;
 // mod catchall;
 pub mod common;
 // mod error;

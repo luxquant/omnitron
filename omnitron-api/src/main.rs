@@ -15,8 +15,12 @@ pub fn main() {
 
   let api_type = &args[1];
   let spec = match api_type.as_str() {
-    "user" => OpenApiService::new(api::user::get(), "Omnitron User", env!("CARGO_PKG_VERSION")).server("/@omnitron/api").spec(),
-    "admin" => OpenApiService::new(api::admin::get(), "Omnitron Admin", env!("CARGO_PKG_VERSION")).server("/@omnitron/admin/api").spec(),
+    "user" => OpenApiService::new(api::user::get(), "Omnitron User", env!("CARGO_PKG_VERSION"))
+      .server("/@omnitron/api")
+      .spec(),
+    "admin" => OpenApiService::new(api::admin::get(), "Omnitron Admin", env!("CARGO_PKG_VERSION"))
+      .server("/@omnitron/admin/api")
+      .spec(),
     _ => {
       eprintln!("Invalid API type: {}. Use 'user' or 'admin'.", api_type);
       std::process::exit(1);

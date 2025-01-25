@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use omnitron_api::common::{RequestAuthorization, SessionAuthorization, SessionExt};
 use omnitron_gate_common::{Target, TargetHTTPOptions, TargetOptions};
 use omnitron_gate_core::{OmnitronServerHandle, Services};
 use poem::session::Session;
@@ -10,7 +11,6 @@ use serde::Deserialize;
 use tokio::sync::Mutex;
 use tracing::*;
 
-use omnitron_api::common::{RequestAuthorization, SessionAuthorization, SessionExt};
 use crate::proxy::{proxy_normal_request, proxy_websocket_request};
 
 #[derive(Deserialize)]

@@ -2,10 +2,10 @@ use core::str;
 use std::sync::Arc;
 
 use anyhow::Context;
+use http::{HeaderName, StatusCode};
 use omnitron_gate_common::auth::{AuthState, CredentialKind};
 use omnitron_gate_common::{OmnitronError, ProtocolName, TargetOptions};
 use omnitron_gate_core::{AuthStateStore, Services};
-use http::{HeaderName, StatusCode};
 use percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
 use poem::session::Session;
 use poem::web::{Data, Redirect};

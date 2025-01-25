@@ -11,12 +11,15 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use async_trait::async_trait;
-use omnitron_api::common::page_admin_auth;
-use omnitron_gate_common::{ListenEndpoint, Target, TargetOptions, TlsCertificateAndPrivateKey, TlsCertificateBundle, TlsPrivateKey};
-use omnitron_gate_core::{ProtocolServer, Services, TargetTestError};
 use http::HeaderValue;
 use logging::{get_client_ip, log_request_error, log_request_result, span_for_request};
 use omnitron_api::admin_api::admin_api_app;
+use omnitron_api::common::{endpoint_admin_auth, endpoint_auth, page_admin_auth, page_auth, SESSION_COOKIE_NAME};
+use omnitron_api::session::{SessionStore, SharedSessionStorage};
+use omnitron_gate_common::{
+  ListenEndpoint, Target, TargetOptions, TlsCertificateAndPrivateKey, TlsCertificateBundle, TlsPrivateKey,
+};
+use omnitron_gate_core::{ProtocolServer, Services, TargetTestError};
 use omnitron_web::Assets;
 use poem::endpoint::{EmbeddedFileEndpoint, EmbeddedFilesEndpoint};
 use poem::listener::{Listener, RustlsConfig};
@@ -28,10 +31,8 @@ use poem_openapi::OpenApiService;
 use tokio::sync::Mutex;
 use tracing::*;
 
-use omnitron_api::common::{endpoint_admin_auth, endpoint_auth, page_auth, SESSION_COOKIE_NAME};
 use crate::error::error_page;
 use crate::middleware::{CookieHostMiddleware, TicketMiddleware};
-use omnitron_api::session::{SessionStore, SharedSessionStorage};
 
 pub struct HTTPProtocolServer {
   services: Services,
@@ -53,8 +54,8 @@ fn make_session_storage() -> SharedSessionStorage {
 impl ProtocolServer for HTTPProtocolServer {
   async fn run(self, address: ListenEndpoint) -> Result<()> {
     let admin_api_app = admin_api_app(&self.services).into_endpoint();
-    let api_service =
-      OpenApiService::new(omnitron_api::api::user::get(), "Omnitron user API", env!("CARGO_PKG_VERSION")).server("/@omnitron/api");
+    let api_service = OpenApiService::new(omnitron_api::api::user::get(), "Omnitron user API", env!("CARGO_PKG_VERSION"))
+      .server("/@omnitron/api");
     let ui = api_service.swagger_ui();
     let spec = api_service.spec_endpoint();
 

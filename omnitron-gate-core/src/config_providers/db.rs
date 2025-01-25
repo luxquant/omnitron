@@ -4,6 +4,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use chrono::Utc;
 use data_encoding::BASE64;
+use omnitron_db_entities as entities;
 use omnitron_gate_common::auth::{
   AllCredentialsPolicy, AnySingleCredentialPolicy, AuthCredential, CredentialKind, CredentialPolicy, PerProtocolCredentialPolicy,
 };
@@ -12,7 +13,6 @@ use omnitron_gate_common::helpers::otp::verify_totp;
 use omnitron_gate_common::{
   OmnitronError, Role, Target, User, UserAuthCredential, UserPasswordCredential, UserPublicKeyCredential, UserTotpCredential,
 };
-use omnitron_db_entities as entities;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, QueryFilter, QueryOrder, Set};
 use tokio::sync::Mutex;
 use tracing::*;

@@ -3,8 +3,8 @@ use std::net::SocketAddr;
 use std::sync::{Arc, Weak};
 
 use anyhow::{anyhow, Context, Result};
-use omnitron_gate_common::{OmnitronError, ProtocolName, SessionId, Target};
 use omnitron_db_entities::Session;
+use omnitron_gate_common::{OmnitronError, ProtocolName, SessionId, Target};
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
 use tokio::sync::{broadcast, Mutex};
 use tracing::*;

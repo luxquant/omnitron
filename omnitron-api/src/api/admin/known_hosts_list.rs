@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use omnitron_gate_common::OmnitronError;
 use omnitron_db_entities::KnownHost;
+use omnitron_gate_common::OmnitronError;
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, OpenApi};

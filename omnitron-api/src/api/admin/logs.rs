@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
-use omnitron_gate_common::OmnitronError;
 use omnitron_db_entities::LogEntry;
+use omnitron_gate_common::OmnitronError;
 use poem::web::Data;
 use poem_openapi::payload::Json;
 use poem_openapi::{ApiResponse, Object, OpenApi};
