@@ -14,7 +14,7 @@ anyhow = { version = "1.0", features = ["std"] }
 async-trait = "0.1.85"
 tokio = { version = "1.43.0", features = ["tracing", "signal"] }
 tracing.workspace = true
-uuid = { version = "1.2" }
+uuid = { version = "1.12.1" }
 bytes.workspace = true
 rustls = "0.23"
 rustls-pemfile = "1.0"
